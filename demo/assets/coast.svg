@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
+  <defs><linearGradient id="ocean" x2="1" y2="1"><stop stop-color="#1f5d84"/><stop offset=".55" stop-color="#379caa"/><stop offset="1" stop-color="#9cd7c5"/></linearGradient><linearGradient id="sand" x2=".7" y2="1"><stop stop-color="#f0ddb6"/><stop offset="1" stop-color="#c5a883"/></linearGradient></defs>
+  <path fill="url(#ocean)" d="M0 0h640v400H0z"/>
+  <path d="M640 95C443 164 536 237 344 296S267 354 135 400h505Z" fill="url(#sand)"/>
+  <path d="M640 76C420 156 518 221 333 280S235 363 107 400" fill="none" stroke="#ebfaf0" stroke-width="13" opacity=".68"/>
+  <path d="M640 57C401 144 494 216 307 265S213 354 82 400" fill="none" stroke="#d5eee1" stroke-width="4" opacity=".4"/>
+  <path d="M75 112c75-36 82 23 164-22M103 176c81-28 91 8 143-19M335 57c32-9 74-4 109-23" fill="none" stroke="#b9e6e0" stroke-width="2" opacity=".35"/>
+</svg>

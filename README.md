@@ -1,0 +1,86 @@
+# X Ambient
+
+Ambient light for your X timeline. Hover over a post to let its photos and videos illuminate the whole page.
+
+English · [日本語](README.ja.md) · [Download](https://github.com/mmnga/x-ambient/releases/latest)
+
+[![CI](https://github.com/mmnga/x-ambient/actions/workflows/ci.yml/badge.svg)](https://github.com/mmnga/x-ambient/actions/workflows/ci.yml)
+
+![X Ambient preview using the included demo artwork](docs/images/preview.png)
+
+Colors radiate from the edges of the hovered media, across the margins and the backgrounds of other post cards. Photos, videos, and avatars stay sharp. The preview uses artwork included in the local demo.
+
+## Features
+
+- Whole-page lighting, including post card backgrounds, with an optional mode around the hovered post.
+- Directional, blurred light from the actual media position. Portrait videos work even inside a wider player.
+- Live video colors, updated at up to 12 fps, with pause and seek support.
+- Multiple photos, new timeline posts, scrolling, and X page navigation.
+- Dark and light themes, plus reduced motion support.
+- Adjustable intensity, blur, and spread.
+- Optional cards that fit the available window width, preserving text size and media aspect ratio. **Off by default.**
+
+## Install in Chrome
+
+1. Download **`x-ambient.zip`** from the [latest release](https://github.com/mmnga/x-ambient/releases/latest) and extract it.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Choose **Load unpacked** and select the extracted folder containing `manifest.json`.
+4. Reload X, then hover over a post with a photo or video.
+
+You can also clone or download this repository and load its root folder directly. Installation requires no Node.js, build step, or package installation. This project is distributed as an unpacked extension, rather than through the Chrome Web Store.
+
+To update, replace the files in the same folder, click the extension's **Reload** button (↻), and reload X.
+
+## Settings
+
+Open the extension's toolbar icon. Changes apply to open X tabs and are saved locally.
+
+| Setting | Default |
+| --- | --- |
+| Ambient light | On |
+| Lighting area | Whole page |
+| Intensity | 65% |
+| Blur | 56 px |
+| Spread | 75% |
+| Follow video colors | On |
+| Fit cards to window width | Off |
+
+Window fitting uses the space available beside the navigation and sidebar. At narrower widths, the sidebar gives way to the timeline. Switching the option off restores X's layout. Saved preferences survive extension updates; **Reset to defaults** restores the values above.
+
+## Try the demo
+
+With Node.js 22 or newer:
+
+```sh
+git clone https://github.com/mmnga/x-ambient.git
+cd x-ambient
+npm run demo
+```
+
+Open [localhost:4318](http://127.0.0.1:4318). The demo uses the same renderer as the extension, with original image and video assets. Try both themes, portrait video, multiple photos, and adding a new post. Press `Ctrl+C` to stop the server. Set `X_AMBIENT_DEMO_PORT` to use a different port.
+
+## Development
+
+No npm dependencies are needed:
+
+```sh
+npm run check
+npm test
+npm run package
+```
+
+Packaging requires the `zip` command and produces `output/x-ambient/` and `output/x-ambient.zip`. The archive contains the extension runtime, its license, and installation instructions. Demo assets and local test output stay out of the distribution.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the code layout, manual checks, and release process. GitHub Actions checks Node.js 22 and 24; pushing a matching version tag builds a GitHub Release with the installable ZIP.
+
+## How it works and privacy
+
+The content script draws media from the page into small canvases, then projects their edge colors outward and blurs the result. A media mask keeps the original images and videos clear. Cross-origin canvases are displayed without reading back or exporting their pixels.
+
+The extension uses `storage` for settings and runs only on X/Twitter pages. It does not capture your screen, send data to an external service, or start a second video player. Settings are stored on your device.
+
+X's internal page structure can change and require selector updates. Media that the browser does not allow to be drawn into a canvas, such as some protected video, is unsupported.
+
+## License
+
+[MIT](LICENSE), including the original demo artwork, videos, and icons. This project is not affiliated with or endorsed by X / Twitter.
