@@ -7,6 +7,15 @@
   const themeButton = document.getElementById("theme");
   let settings = { ...DEFAULTS };
   let languageRequest = 0;
+  let previewPost = null;
+  const sidebar = document.querySelector(".sidebar");
+  document.getElementById("timeline").addEventListener("pointerover", event => {
+    const post = event.target.closest('article[data-testid="tweet"]');
+    if (post) previewPost = post;
+  });
+  // Keep the selected post visible while the mouse moves to the demo's controls.
+  sidebar.addEventListener("pointerenter", () => document.dispatchEvent(new CustomEvent("xambient:preview", { detail: previewPost })));
+  sidebar.addEventListener("pointerleave", () => document.dispatchEvent(new CustomEvent("xambient:preview", { detail: null })));
   for (const id of Object.keys(DEFAULTS)) {
     const input = document.getElementById(id);
     input.addEventListener(input.type === "range" ? "input" : "change", () => {

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Render original X media edge colors behind page content. Intensity blends from the native theme to blurred media colors, including post card backgrounds. Keep the selected demo post active while adjusting its controls.
+
 - Add Thai, Vietnamese, Indonesian, French, German, Brazilian and European Portuguese, Italian, Russian, Arabic and Hindi translations. Arabic layouts follow right-to-left reading order and restore left-to-right order when switching languages.
 
 - Add Korean, Simplified Chinese and Traditional Chinese translations, with script-aware Chinese detection and a shared language registry for menus and packaging.

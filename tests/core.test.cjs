@@ -76,6 +76,23 @@ test("light theme, dark theme, and transparent backgrounds are distinguished", (
   assert.equal(Core.isDarkColor("rgba(0, 0, 0, 0)", false), false);
 });
 
+test("native theme color resolves transparent roots and partial backgrounds", () => {
+  assert.equal(Core.resolveBackgroundColor(["rgb(21, 32, 43)", "rgba(0, 0, 0, 0)"]), "rgb(21, 32, 43)");
+  assert.equal(Core.resolveBackgroundColor(["rgb(0, 0, 0)", "rgba(200, 240, 160, 0.5)"]), "rgb(100, 120, 80)");
+  assert.equal(Core.resolveBackgroundColor(["transparent", "invalid"], false), "rgb(255, 255, 255)");
+  assert.equal(Core.resolveBackgroundColor(["transparent", "invalid"], true), "rgb(0, 0, 0)");
+});
+
+test("full X intensity extends opaque edge colors instead of fading them toward the theme", () => {
+  const args = [{ width: 144, height: 90 }, { left: 80, top: 60, width: 80, height: 50 }, { width: 256, height: 192 }, 60];
+  const low = Core.buildRayProjection(...args);
+  const middle = Core.buildRayProjection(...args, 0.5);
+  const full = Core.buildRayProjection(...args, 1);
+  assert.ok(low.some(strip => strip.alpha < 0.5));
+  assert.ok(full.length > 0 && full.every(strip => strip.alpha === 1));
+  for (let i = 0; i < low.length; i++) assert.ok(low[i].alpha <= middle[i].alpha && middle[i].alpha <= full[i].alpha);
+});
+
 test("local mode protects the hovered post horizontally and vertically", () => {
   const rect = { left: 400, right: 1000, top: 100, bottom: 600 };
   const view = { width: 1440, height: 900 };

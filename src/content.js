@@ -2,6 +2,7 @@
   "use strict";
 
   const POST_SELECTOR = 'article[data-testid="tweet"], article[role="article"]';
+  const BACKGROUND_PROTECTED_SELECTOR = 'button, input, select, textarea, [role="button"], [role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"], [aria-modal="true"], [data-testid="Dropdown"], [data-testid="tweetPhoto"], [data-testid="videoPlayer"], [data-testid^="UserAvatar"]';
 
   function statusId(pathname) {
     return String(pathname).match(/^\/(?:[^/]+\/status|i\/web\/status)\/(\d+)(?:\/|$)/)?.[1] || null;
@@ -56,6 +57,7 @@
   let pathname = location.pathname;
   let pointer = null;
   let activePost = null;
+  let previewPost = null;
   let pendingPost = null;
   let hoverTimer = 0;
   let reconcileFrame = 0;
@@ -66,6 +68,10 @@
   let bounds = null;
   let projection = null;
   let protectionKey = "";
+  let backgroundActive = false;
+  let backgroundDirty = true;
+  let backgroundRestoreTimer = 0;
+  const clearedBackgrounds = new Set();
   let front = 0;
   let disposed = false;
 
@@ -73,7 +79,7 @@
   host.id = "x-ambient-light";
   host.dataset.platform = platform;
   host.setAttribute("aria-hidden", "true");
-  host.style.cssText = "all:initial;position:fixed;inset:0;z-index:2147483600;pointer-events:none;display:block;overflow:hidden;contain:strict;";
+  host.style.cssText = `all:initial;position:fixed;inset:0;z-index:${platform === "x" ? -1 : 2147483600};pointer-events:none;display:block;overflow:hidden;contain:strict;`;
   const shadow = host.attachShadow({ mode: "open" });
   const style = document.createElement("style");
   style.textContent = `
@@ -97,6 +103,13 @@
   }
   light.append(field);
   shadow.append(style, light);
+  const backgroundStyle = document.createElement("style");
+  backgroundStyle.textContent = ".xa-background-clear { background-color:transparent !important; }";
+  backgroundStyle.disabled = true;
+  if (platform === "x") {
+    document.documentElement.append(backgroundStyle);
+    style.textContent += "canvas { filter:blur(var(--xa-blur)); }";
+  }
   document.documentElement.append(host);
   const contexts = canvases.map((canvas) => canvas.getContext("2d"));
   const mosaic = document.createElement("canvas");
@@ -129,15 +142,73 @@
   }
 
   function updateTheme() {
+    if (platform === "x") return;
+    const backgrounds = [document.documentElement, document.body].filter(Boolean)
+      .map(element => getComputedStyle(element).backgroundColor);
     let dark = colorScheme.matches;
-    for (const element of [document.documentElement, document.body]) {
-      if (element) dark = Core.isDarkColor(getComputedStyle(element).backgroundColor, dark);
-    }
+    for (const color of backgrounds) dark = Core.isDarkColor(color, dark);
     host.style.mixBlendMode = dark ? "screen" : "multiply";
   }
 
+  function observeBackgrounds() {
+    if (platform !== "x" || !backgroundActive) return;
+    backgroundObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "style", "role", "aria-modal"] });
+    backgroundObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] });
+  }
+
+  function syncBackgrounds() {
+    if (platform !== "x") return;
+    clearTimeout(backgroundRestoreTimer);
+    backgroundRestoreTimer = 0;
+    if (backgroundActive && !backgroundDirty) return;
+    backgroundActive = true;
+    backgroundDirty = false;
+    backgroundObserver.disconnect();
+    // Temporarily reveal native styles for theme detection, then expose only plain page surfaces.
+    // Normal compositing behind the UI lets intensity mix the theme with unmodified media colors.
+    backgroundStyle.disabled = true;
+    const nativeColors = [document.documentElement, document.body].map(element => getComputedStyle(element).backgroundColor);
+    host.style.backgroundColor = Core.resolveBackgroundColor(nativeColors, colorScheme.matches);
+    const next = new Set();
+    for (const element of document.querySelectorAll("body, body :is(div, main, article, section, aside, header, footer, nav)")) {
+      if (element.closest(BACKGROUND_PROTECTED_SELECTOR)) continue;
+      if (settings.scope === "post" && activePost?.contains(element)) continue;
+      const computed = getComputedStyle(element);
+      if (computed.backgroundColor === "rgba(0, 0, 0, 0)" || computed.backgroundImage !== "none"
+        || Number(computed.zIndex) > 10) continue;
+      const rect = element.getBoundingClientRect();
+      if (element !== document.body && (rect.width < 150 || rect.height < 32)) continue;
+      if (!element.classList.contains("xa-background-clear")) element.classList.add("xa-background-clear");
+      next.add(element);
+    }
+    for (const element of clearedBackgrounds) if (!next.has(element)) element.classList.remove("xa-background-clear");
+    clearedBackgrounds.clear();
+    for (const element of next) clearedBackgrounds.add(element);
+    backgroundStyle.disabled = false;
+    observeBackgrounds();
+  }
+
+  function restoreBackgrounds() {
+    clearTimeout(backgroundRestoreTimer);
+    backgroundRestoreTimer = 0;
+    backgroundActive = false;
+    backgroundDirty = true;
+    backgroundObserver.disconnect();
+    backgroundStyle.disabled = true;
+    for (const element of clearedBackgrounds) element.classList.remove("xa-background-clear");
+    clearedBackgrounds.clear();
+    host.style.removeProperty("background-color");
+  }
+
+  function releaseBackgrounds() {
+    if (platform !== "x" || !backgroundActive || backgroundRestoreTimer) return;
+    backgroundRestoreTimer = window.setTimeout(restoreBackgrounds, reducedMotion.matches ? 0 : 320);
+  }
+
   function applySettings(value) {
+    const scope = settings.scope;
     settings = Settings.normalize(value);
+    if (settings.scope !== scope) backgroundDirty = true;
     cards?.setEnabled(settings.fitCards);
     host.style.setProperty("--xa-opacity", String(settings.intensity / 100));
     host.style.setProperty("--xa-blur", `${settings.blur}px`);
@@ -166,6 +237,7 @@
     activeResizeObserver?.disconnect();
     stopFrames();
     light.classList.remove("visible");
+    releaseBackgrounds();
   }
 
   function visibleRect(element, fullRect, minSize = 48, minIntersection = 16) {
@@ -341,7 +413,7 @@
       height: bounds.height / region.height * size.height,
     };
     const source = { width: mosaic.width, height: Math.max(48, Math.min(144, Math.round(144 * bounds.height / bounds.width))) };
-    projection = { size, source, target, strips: Core.buildRayProjection(source, target, size, (120 + settings.spread * 12) * scale) };
+    projection = { size, source, target, strips: Core.buildRayProjection(source, target, size, (120 + settings.spread * 12) * scale, platform === "x" ? settings.intensity / 100 : 0) };
     updateTheme();
   }
 
@@ -429,6 +501,7 @@
     host.dataset.mediaCount = String(media.length);
     if (!media.length || !bounds?.width || !bounds.height) {
       light.classList.remove("visible");
+      releaseBackgrounds();
       stopFrames();
       return;
     }
@@ -436,12 +509,16 @@
     if (changed) {
       const back = 1 - front;
       if (paint(back)) {
+        syncBackgrounds();
         canvases[front].classList.remove("front");
         canvases[back].classList.add("front");
         front = back;
         light.classList.add("visible");
       }
-    } else if (paint(front)) light.classList.add("visible");
+    } else if (paint(front)) {
+      syncBackgrounds();
+      light.classList.add("visible");
+    }
     startFrames();
   }
 
@@ -449,6 +526,7 @@
     if (disposed || !eligible() || !post.isConnected) return;
     clearTimeout(hoverTimer);
     hoverTimer = 0;
+    if (activePost !== post) backgroundDirty = true;
     activePost = post;
     pendingPost = null;
     activeObserver.disconnect();
@@ -487,7 +565,7 @@
       else activate(video);
       return;
     }
-    const detailPost = Posts.findDetailPost(document, pathname);
+    const detailPost = Posts.findDetailPost(document, pathname) || (previewPost?.isConnected ? previewPost : null);
     const element = pointer && document.elementFromPoint(pointer.x, pointer.y);
     const post = element?.closest(POST_SELECTOR) || detailPost;
     if (post === activePost && post) {
@@ -512,6 +590,21 @@
   }
 
   const activeObserver = new MutationObserver(scheduleReconcile);
+  const backgroundObserver = new MutationObserver(records => {
+    const changed = records.some(record => {
+      const target = record.target;
+      if (!(target instanceof Element)) return false;
+      if (clearedBackgrounds.has(target)) return true;
+      if (target.closest(BACKGROUND_PROTECTED_SELECTOR)) return Boolean(target.querySelector(".xa-background-clear"));
+      if (record.type === "childList") return [...record.addedNodes, ...record.removedNodes].some(node => node.nodeType === Node.ELEMENT_NODE);
+      return target === document.documentElement || target === document.body || clearedBackgrounds.has(target)
+        || getComputedStyle(target).backgroundColor !== "rgba(0, 0, 0, 0)";
+    });
+    if (changed) {
+      backgroundDirty = true;
+      scheduleReconcile();
+    }
+  });
   const activeResizeObserver = automatic ? new ResizeObserver(scheduleReconcile) : null;
   const pageObserver = new MutationObserver((records) => {
     if (pathname !== location.pathname) scheduleReconcile();
@@ -556,7 +649,7 @@
         && (event.target.matches("img, video") || event.target.querySelector("img, video"))) scheduleReconcile();
     }, true);
   }
-  listen(window, "resize", scheduleReconcile, { passive: true });
+  listen(window, "resize", () => { backgroundDirty = true; scheduleReconcile(); }, { passive: true });
   listen(document, "xambient:layout", scheduleReconcile);
   listen(window, "blur", () => { if (!automatic) { pointer = null; scheduleReconcile(); } });
   listen(window, "focus", scheduleReconcile);
@@ -571,7 +664,7 @@
     }, true);
   }
   listen(reducedMotion, "change", scheduleReconcile);
-  listen(colorScheme, "change", scheduleReconcile);
+  listen(colorScheme, "change", () => { backgroundDirty = true; scheduleReconcile(); });
 
   if (hasStorage) {
     chrome.storage.local.get(Settings.STORAGE_KEY).then((result) => {
@@ -585,6 +678,11 @@
   } else {
     // The local demo uses the same renderer without an installed extension.
     listen(document, "xambient:settings", (event) => applySettings(event.detail));
+    listen(document, "xambient:preview", (event) => {
+      const post = event.detail;
+      previewPost = post instanceof Element && post.matches(POST_SELECTOR) ? post : null;
+      scheduleReconcile();
+    });
   }
   applySettings(settings);
 
@@ -596,6 +694,8 @@
     pageObserver.disconnect();
     themeObserver.disconnect();
     cards?.dispose();
+    restoreBackgrounds();
+    backgroundStyle.remove();
     for (const remove of removers) remove();
     host.remove();
   }
