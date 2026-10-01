@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.0 - 2026-10-01
+
 - Follow TikTok's active For You video automatically, including its canvas presentation, paused frames, visible posters and scrolling.
 - Follow the main video on Niconico watch pages while preserving native comments and controls. Update supported-site text across all 17 languages.
 
