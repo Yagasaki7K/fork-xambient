@@ -6,6 +6,7 @@
   const elements = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
   const status = document.getElementById("status");
   const languageInput = document.getElementById("language");
+  I18n.populateLanguageSelect(languageInput);
   let settings = { ...DEFAULTS };
   let translator;
   let languageRequest = 0;

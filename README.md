@@ -21,7 +21,7 @@ Colors radiate from the edges of the selected media, across the margins and the 
 - Dark and light themes, plus reduced motion support.
 - Adjustable intensity, blur, and spread.
 - Automatic lighting for the largest visible video on Twitch and Kick, including paused frames.
-- English, Spanish, and Japanese, with automatic browser-language detection and a manual language selector.
+- English, Spanish, Japanese, Korean, Simplified Chinese, and Traditional Chinese, with automatic browser-language detection and a manual language selector.
 - Optional X cards that fit the available window width, preserving text size and media aspect ratio. **Off by default.**
 
 ## Install in Chrome
@@ -37,7 +37,7 @@ To update, replace the files in the same folder, click the extension's **Reload*
 
 ## Settings
 
-Open the extension's toolbar icon. Changes apply to open supported tabs and are saved locally. **Language** follows Chrome by default, or can be set to Español, English, or 日本語. Unsupported browser languages fall back to English. Resetting lighting settings preserves your language choice.
+Open the extension's toolbar icon. Changes apply to open supported tabs and are saved locally. **Language** follows Chrome by default, or can be set to English, Español, 日本語, 한국어, 简体中文, or 繁體中文. Unsupported browser languages fall back to English. Resetting lighting settings preserves your language choice. Chinese detection distinguishes simplified and traditional scripts, including regional browser settings for Taiwan, Hong Kong, and Macau.
 
 | Setting | Default |
 | --- | --- |

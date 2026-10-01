@@ -22,7 +22,7 @@ For bug reports, include your Chrome version, OS, reproduction steps, and affect
 | `src/ambient-core.js` | Media geometry and edge projection |
 | `src/card-layout.js` | Optional responsive timeline width |
 | `src/i18n.js` | Bundled translation loading and language selection |
-| `_locales/` | English, Spanish, and Japanese message catalogs |
+| `_locales/` | Bundled language catalogs |
 | `src/streaming.js` | Site routing and Twitch/Kick visible player selection |
 | `src/instagram.js` | Instagram feed/Reels discovery and active post selection |
 | `src/x-posts.js` | Compatibility entry for earlier unpacked manifests |
@@ -49,7 +49,7 @@ The Release workflow validates the tag, reruns checks, builds `x-ambient.zip`, a
 
 ## Localization and streaming checks
 
-Keep the same message keys in all three `_locales/*/messages.json` files. Translate text, tooltips, accessible labels, status messages, and newly added demo posts. Use `textContent` rather than translated HTML. Check both English and Spanish in the popup and demo, plus automatic regional locales such as `es-AR`.
+Keep the same message keys in all `_locales/*/messages.json` files. Translate text, tooltips, accessible labels, status messages, and newly added demo posts. Use `textContent` rather than translated HTML. Check each language in the popup and demo, plus automatic regional and script locales such as `es-AR`, `ko-KR`, `zh-Hans`, and `zh-Hant-HK`. Define new languages and their native display names in `LANGUAGE_OPTIONS` in `src/i18n.js`; the popup, demo and distribution package use this shared registry. Use Chrome locale folder codes (such as `zh_TW`) for catalogs and BCP 47 tags (such as `zh-TW`) for HTML.
 
 Open `tests/fixtures/stream.html?site=twitch` and `?site=kick` through the demo server to test automatic selection, pause/resume, player replacement, resizing, visibility, and click-through controls. These fixtures use local media and a site-routing stub. Verify the installed extension on the actual sites before claiming live-site validation. Cross-origin embedded frames are outside the current support scope.
 
