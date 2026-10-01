@@ -41,8 +41,8 @@ For bug reports, include your Chrome version, OS, reproduction steps, and affect
 5. Create and push a tag matching the manifest version, for example:
 
    ```sh
-   git tag v0.2.2
-   git push origin v0.2.2
+   git tag v0.3.0
+   git push origin v0.3.0
    ```
 
 The Release workflow validates the tag, reruns checks, builds `x-ambient.zip`, and publishes it with installation instructions and generated release notes. The archive uses an explicit file list and is rebuilt from scratch. `output/`, browser recordings, local profiles, and saved authenticated pages are excluded from Git.
