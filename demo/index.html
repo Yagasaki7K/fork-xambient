@@ -18,7 +18,7 @@
 <body>
   <div class="layout">
     <aside class="navigation">
-      <a class="brand" href="#" aria-label="X Ambient home" data-i18n-aria-label="homeLinkLabel"><span class="brand-mark"></span>X Ambient</a>
+      <a class="brand" href="#" aria-label="X Ambient home" data-i18n-aria-label="homeLinkLabel"><span class="brand-mark"></span><bdi>X Ambient</bdi></a>
       <div class="nav-item active">⌂ <span data-i18n="navHome">Home</span></div>
       <div class="nav-item">⌕ <span data-i18n="navSearch">Explore</span></div>
       <div class="nav-item">♧ <span data-i18n="navNotifications">Notifications</span></div>
@@ -26,7 +26,7 @@
       <div class="nav-item">▱ <span data-i18n="navBookmarks">Bookmarks</span></div>
       <div class="nav-item">◯ <span data-i18n="navProfile">Profile</span></div>
       <p class="nav-caption"><span data-i18n="navCaption">AMBIENT LIGHT FOR X</span><br><span data-i18n="localPlayground">LOCAL PLAYGROUND</span></p>
-      <div class="nav-profile"><span class="avatar you">y</span><div><span data-i18n="youLabel">You</span><small>@you</small></div></div>
+      <div class="nav-profile"><span class="avatar you">y</span><div><span data-i18n="youLabel">You</span><small><bdi>@you</bdi></small></div></div>
     </aside>
     <main data-testid="primaryColumn">
       <header class="timeline-header"><div><span class="eyebrow" data-i18n="playgroundLabel">PLAYGROUND</span><h1 data-i18n="timelineHeading">A timeline in color</h1></div><span class="live"><i></i> <span data-i18n="previewLabel">Preview</span></span></header>
@@ -83,7 +83,7 @@
     <aside class="sidebar">
       <section class="panel">
         <div class="panel-title"><span class="eyebrow" data-i18n="atmosphereLabel">YOUR ATMOSPHERE</span><label class="toggle"><input id="enabled" type="checkbox" checked aria-label="Enable ambient light" data-i18n-aria-label="enabledLabel"><span></span></label></div>
-        <label class="control" for="language"><span data-i18n="languageLabel">Language</span><select id="language" disabled><option value="auto" data-i18n="languageAutomatic">Automatic (browser language)</option><option value="es" lang="es">Español</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option></select></label>
+        <label class="control" for="language"><span data-i18n="languageLabel">Language</span><select id="language" disabled><option value="auto" data-i18n="languageAutomatic">Automatic (browser language)</option></select></label>
         <h2 data-i18n="demoControlsHeading">Set the mood.</h2><p class="panel-description" data-i18n="demoControlsDescription">Let each post color the page.</p>
         <label class="control" for="scope"><span data-i18n="scopeLabel">Lighting area</span><select id="scope"><option value="page" data-i18n="scopePage">Whole page background</option><option value="post" data-i18n="scopePost">Around the post or player</option></select></label>
         <label class="control" for="intensity"><span><span data-i18n="intensityLabel">Intensity</span><output id="intensity-value">65%</output></span><input id="intensity" type="range" min="0" max="100" value="65"></label>
@@ -95,7 +95,7 @@
       </section>
       <section class="note"><span class="note-mark">✦</span><p><span data-i18n="demoNote">Hover. Feel the color.</span><small data-i18n="demoNoteDetail">Soft colors from the photo fill the page background.</small></p></section>
       <button id="add-post" type="button" class="add-post" data-i18n="addPostLabel">＋ Add a post</button>
-      <p class="footer-note">X Ambient / 0.2.2<br><span data-i18n="demoFooter">This is a local demo.</span></p>
+      <p class="footer-note"><bdi>X Ambient / 0.2.2</bdi><br><span data-i18n="demoFooter">This is a local demo.</span></p>
     </aside>
   </div>
 </body>

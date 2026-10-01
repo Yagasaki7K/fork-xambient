@@ -1,28 +1,76 @@
 (() => {
   "use strict";
 
-  const LANGUAGES = Object.freeze(["en", "es", "ja"]);
+  const LANGUAGE_OPTIONS = Object.freeze([
+    { locale: "en", label: "English" },
+    { locale: "es", label: "Español" },
+    { locale: "ja", label: "日本語" },
+    { locale: "ko", label: "한국어" },
+    { locale: "zh_CN", label: "简体中文" },
+    { locale: "zh_TW", label: "繁體中文" },
+    { locale: "th", label: "ไทย" },
+    { locale: "vi", label: "Tiếng Việt" },
+    { locale: "id", label: "Bahasa Indonesia" },
+    { locale: "fr", label: "Français" },
+    { locale: "de", label: "Deutsch" },
+    { locale: "pt_BR", label: "Português (Brasil)" },
+    { locale: "pt_PT", label: "Português (Portugal)" },
+    { locale: "it", label: "Italiano" },
+    { locale: "ru", label: "Русский" },
+    { locale: "ar", label: "العربية", direction: "rtl" },
+    { locale: "hi", label: "हिन्दी" },
+  ].map(Object.freeze));
+  const LANGUAGES = Object.freeze(LANGUAGE_OPTIONS.map(option => option.locale));
   const LANGUAGE_STORAGE_KEY = "xAmbientLanguage";
   const catalogBase = typeof document !== "undefined" && document.currentScript?.src
     ? new URL("../_locales/", document.currentScript.src) : null;
   const catalogs = new Map();
 
+  function localeForTag(value) {
+    const parts = String(value).toLowerCase().replaceAll("_", "-").split("-");
+    const exact = LANGUAGES.find(locale => locale.toLowerCase().replaceAll("_", "-") === parts.join("-"));
+    if (exact) return exact;
+    const base = parts[0];
+    if (base === "pt") {
+      const region = parts.slice(1).find(part => /^[a-z]{2}$|^\d{3}$/.test(part));
+      const locale = region && region !== "br" ? "pt_PT" : "pt_BR";
+      return LANGUAGES.includes(locale) ? locale : null;
+    }
+    if (base === "zh") {
+      const traditional = parts.includes("hant") || (!parts.includes("hans") && parts.some(part => ["tw", "hk", "mo"].includes(part)));
+      const locale = traditional ? "zh_TW" : "zh_CN";
+      return LANGUAGES.includes(locale) ? locale : null;
+    }
+    return LANGUAGES.includes(base) ? base : null;
+  }
+
   function normalizeLanguage(value) {
-    return LANGUAGES.includes(value) ? value : "auto";
+    return localeForTag(value) || "auto";
   }
 
   function resolveLocale(language, uiLanguage = "en") {
     const selected = normalizeLanguage(language);
-    if (selected !== "auto") return selected;
-    const base = String(uiLanguage).toLowerCase().split(/[-_]/)[0];
-    return LANGUAGES.includes(base) ? base : "en";
+    return selected === "auto" ? localeForTag(uiLanguage) || "en" : selected;
+  }
+
+  function populateLanguageSelect(select) {
+    const selected = normalizeLanguage(select.value);
+    for (const option of select.querySelectorAll('option:not([value="auto"])')) option.remove();
+    for (const { locale, label } of LANGUAGE_OPTIONS) {
+      const option = select.ownerDocument.createElement("option");
+      option.value = locale;
+      option.lang = locale.replaceAll("_", "-");
+      option.dir = "auto";
+      option.textContent = label;
+      select.append(option);
+    }
+    select.value = selected;
   }
 
   function createTranslator(locale, messages, fallback = {}, nativeGetMessage) {
+    const direction = LANGUAGE_OPTIONS.find(option => option.locale === locale)?.direction || "ltr";
     function getMessage(key) {
-      const native = nativeGetMessage?.(key);
-      if (native) return native;
-      return messages[key]?.message || fallback[key]?.message || "";
+      return messages[key]?.message || nativeGetMessage?.(key) || fallback[key]?.message || "";
     }
 
     function apply(root) {
@@ -41,7 +89,10 @@
           }
         }
       }
-      if (root.documentElement) root.documentElement.lang = locale;
+      if (root.documentElement) {
+        root.documentElement.lang = locale.replaceAll("_", "-");
+        root.documentElement.dir = direction;
+      }
     }
 
     return Object.freeze({ locale, getMessage, apply });
@@ -77,7 +128,7 @@
     return createTranslator(locale, messages, fallback, nativeGetMessage);
   }
 
-  const api = Object.freeze({ LANGUAGES, LANGUAGE_STORAGE_KEY, normalizeLanguage, resolveLocale, createTranslator, load });
+  const api = Object.freeze({ LANGUAGES, LANGUAGE_OPTIONS, LANGUAGE_STORAGE_KEY, normalizeLanguage, resolveLocale, populateLanguageSelect, createTranslator, load });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else globalThis.XAmbientI18n = api;
 })();

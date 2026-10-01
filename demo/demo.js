@@ -3,6 +3,7 @@
   const { DEFAULTS, normalize } = globalThis.XAmbientSettings;
   const I18n = globalThis.XAmbientI18n;
   const languageInput = document.getElementById("language");
+  I18n.populateLanguageSelect(languageInput);
   const themeButton = document.getElementById("theme");
   let settings = { ...DEFAULTS };
   let languageRequest = 0;

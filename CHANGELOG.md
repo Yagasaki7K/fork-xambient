@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add Thai, Vietnamese, Indonesian, French, German, Brazilian and European Portuguese, Italian, Russian, Arabic and Hindi translations. Arabic layouts follow right-to-left reading order and restore left-to-right order when switching languages.
+
+- Add Korean, Simplified Chinese and Traditional Chinese translations, with script-aware Chinese detection and a shared language registry for menus and packaging.
+
 - Follow the active Instagram feed post or Reel automatically, including visible carousel slides, paused frames, and scroll selection.
 
 - Add English and Spanish localization, preserve Japanese, and allow manual language selection.
