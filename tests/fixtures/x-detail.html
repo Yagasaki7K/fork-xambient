@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X detail fixture</title>
+  <style>
+    html { color-scheme: dark; font: 16px system-ui, sans-serif; background: #101014; color: #e8eaf2; }
+    body { margin: 0; }
+    header { padding: 20px 40px; }
+    main { width: 580px; margin: auto; border: 1px solid #303038; }
+    article { padding: 20px; border-bottom: 1px solid #303038; background: #14141a; }
+    a { color: #9aa0b4; }
+    p { margin: 8px 0; }
+    img, video { display: block; width: 100%; height: 160px; object-fit: cover; border-radius: 12px; }
+    [data-testid="quoteTweet"] { border: 1px solid #50505a; padding: 8px; }
+  </style>
+</head>
+<body>
+  <header><h1>Post details and replies</h1></header>
+  <main>
+    <article data-testid="tweet" id="ancestor">
+      <a href="/example/status/1000000000000000001"><time datetime="2026-10-01T09:00:00Z">Ancestor</time></a>
+      <div data-testid="quoteTweet"><a href="/example/status/2000000000000000002"><time datetime="2026-10-01T09:01:00Z">Quoted main post</time></a></div>
+      <div data-testid="tweetPhoto"><img src="/demo/assets/forest.svg" alt="Ancestor's green forest"></div>
+    </article>
+    <article data-testid="tweet" id="main-post">
+      <p>Opened post</p>
+      <div data-testid="tweetPhoto"><img src="/demo/assets/sunset.svg" alt="Main post's sunset"></div>
+      <a href="/example/status/2000000000000000002"><time datetime="2026-10-01T09:01:00Z">Main timestamp below media</time></a>
+    </article>
+    <article data-testid="tweet" id="image-reply">
+      <a href="/reply/status/3000000000000000003"><time datetime="2026-10-01T09:02:00Z">Image reply</time></a>
+      <p><a href="/example/status/2000000000000000002">Link back to main post</a></p>
+      <div data-testid="tweetPhoto"><img src="/demo/assets/coast.svg" alt="Reply's turquoise coast"></div>
+    </article>
+    <article data-testid="tweet" id="video-reply">
+      <a href="/reply/status/4000000000000000004"><time datetime="2026-10-01T09:03:00Z">Video reply</time></a>
+      <div data-testid="videoPlayer"><video src="/demo/assets/aurora.webm" muted loop playsinline controls preload="auto"></video></div>
+    </article>
+    <article data-testid="tweet" id="text-reply">
+      <a href="/reply/status/5000000000000000005"><time datetime="2026-10-01T09:04:00Z">Text reply</time></a>
+      <p>A text-only reply has no ambient media.</p>
+    </article>
+  </main>
+</body>
+</html>

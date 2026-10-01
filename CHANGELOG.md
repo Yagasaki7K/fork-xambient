@@ -4,6 +4,8 @@
 
 - Add English and Spanish localization, preserve Japanese, and allow manual language selection.
 - Follow visible Twitch and Kick players automatically without changing X hover behavior.
+- Light up the opened X post automatically on detail pages, with hover selection for replies and return to the opened post when hover ends.
+- Keep card width fitting active after X redraws its layout, and allow older unpacked manifest script lists to initialize the renderer.
 - Package bundled translations using a dependency-free, cross-platform ZIP writer.
 
 ## 0.2.2 - 2026-09-30

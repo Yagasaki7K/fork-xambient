@@ -57,7 +57,7 @@
     "message": "Cargando ajustes…"
   },
   "statusReady": {
-    "message": "Pasá el cursor sobre una publicación de X o reproducí un directo en Twitch o Kick."
+    "message": "El detalle de X se ilumina automáticamente; pasá el cursor sobre publicaciones o respuestas. Twitch y Kick siguen el video."
   },
   "statusDisabled": {
     "message": "La luz ambiental está desactivada."

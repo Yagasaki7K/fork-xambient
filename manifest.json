@@ -38,6 +38,7 @@
         "src/ambient-core.js",
         "src/card-layout.js",
         "src/streaming.js",
+        "src/x-posts.js",
         "src/content.js"
       ],
       "run_at": "document_idle"

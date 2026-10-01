@@ -57,7 +57,7 @@
     "message": "Loading settings…"
   },
   "statusReady": {
-    "message": "Hover over a post on X, or play a stream on Twitch or Kick."
+    "message": "X post details light up automatically; hover over timeline posts or replies. Twitch and Kick follow the video."
   },
   "statusDisabled": {
     "message": "Ambient light is off."

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X card layout fixture</title>
+  <style>
+    html { color-scheme: dark; font: 16px system-ui, sans-serif; background: #101014; color: #e8eaf2; }
+    body { margin: 0; }
+    .shell { display: flex; justify-content: center; }
+    header[role="banner"] { width: 260px; flex-shrink: 0; }
+    nav { width: 260px; }
+    main { flex: 0 1 1050px; min-width: 0; }
+    .main-inner { max-width: 1050px; }
+    .row { display: flex; max-width: 1050px; }
+    [data-testid="primaryColumn"] { width: 600px; max-width: 600px; flex-shrink: 0; }
+    .feed { width: 100%; max-width: 600px; }
+    article { padding: 16px; box-sizing: border-box; border: 1px solid #303038; background: #14141a; }
+    .media { aspect-ratio: 16 / 9; position: relative; }
+    img, video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+    a { color: #9aa0b4; }
+    .side-wrapper { width: 350px; margin-left: 30px; flex-shrink: 0; }
+    [data-testid="sidebarColumn"] { width: 350px; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header role="banner"><nav>Navigation</nav></header>
+    <main role="main"><div class="main-inner"><div class="row">
+      <div data-testid="primaryColumn"><div class="feed">
+        <article data-testid="tweet" id="main-post">
+          <p>Opened post</p>
+          <div class="media" data-testid="tweetPhoto"><img src="/demo/assets/sunset.svg" alt="Sunset"></div>
+          <a href="/example/status/2000000000000000002"><time datetime="2026-10-01T09:01:00Z">Main timestamp</time></a>
+        </article>
+        <article data-testid="tweet" id="image-reply">
+          <a href="/reply/status/3000000000000000003"><time datetime="2026-10-01T09:02:00Z">Image reply</time></a>
+          <div class="media" data-testid="tweetPhoto"><img src="/demo/assets/coast.svg" alt="Coast"></div>
+        </article>
+      </div></div>
+      <div class="side-wrapper"><aside data-testid="sidebarColumn">Sidebar</aside></div>
+    </div></div></main>
+  </div>
+</body>
+</html>

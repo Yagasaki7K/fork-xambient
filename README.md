@@ -1,6 +1,6 @@
 # X Ambient
 
-Ambient light for X photos and videos, and Twitch and Kick streams. Hover over a post on X, or watch a video on Twitch or Kick, to illuminate the page.
+Ambient light for X photos and videos, and Twitch and Kick streams. Open an X post's details for automatic lighting, hover over timeline posts or replies, or watch a video on Twitch or Kick to illuminate the page.
 
 English · [Español](README.es.md) · [日本語](README.ja.md) · [Install](INSTALL.md)
 
@@ -13,6 +13,7 @@ Colors radiate from the edges of the hovered media, across the margins and the b
 ## Features
 
 - Whole-page lighting, including post card backgrounds, with an optional mode around the hovered post.
+- Automatic lighting for the opened X post on its detail page. Replies switch the light on hover; leaving a reply returns to the opened post. Media outside the viewport is excluded.
 - Directional, blurred light from the actual media position. Portrait videos work even inside a wider player.
 - Live video colors, updated at up to 12 fps, with pause and seek support.
 - Multiple photos, new timeline posts, scrolling, and X page navigation.
@@ -27,7 +28,7 @@ Colors radiate from the edges of the hovered media, across the margins and the b
 1. Extract a localized **`x-ambient.zip`** build, or download this repository as a ZIP and extract it.
 2. Open `chrome://extensions` and turn on **Developer mode**.
 3. Choose **Load unpacked** and select the extracted folder containing `manifest.json`.
-4. Reload X, Twitch, or Kick. Hover over a post on X, or open a video or live stream on Twitch or Kick.
+4. Reload X, Twitch, or Kick. Open a post's details or hover over a timeline post or reply on X, or open a video or live stream on Twitch or Kick.
 
 You can also clone or download this repository and load its root folder directly. Installation requires no Node.js, build step, or package installation. This project is distributed as an unpacked extension, rather than through the Chrome Web Store.
 
