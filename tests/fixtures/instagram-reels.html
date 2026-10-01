@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram reels fixture</title>
+  <style>
+    html { color-scheme: dark; font: 16px system-ui, sans-serif; background: #101014; color: #e8eaf2; }
+    body { margin: 0; overflow: hidden; }
+    nav { position: fixed; left: 30px; top: 30px; }
+    main { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
+    .reel { height: 100vh; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; gap: 24px; }
+    .player { position: relative; width: min(390px, 60vw); height: 80vh; overflow: hidden; border-radius: 12px; }
+    .player > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .player > div { position: relative; height: 100%; }
+    .player video { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; }
+    aside { width: 180px; }
+    aside img { width: 36px; height: 36px; border-radius: 50%; }
+    button { color: inherit; background: #34394d; border: 0; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+    @media (max-width: 700px) { aside, nav { display: none; } }
+  </style>
+</head>
+<body>
+  <nav>Reels navigation</nav>
+  <main>
+    <div class="reel" id="first-reel"><div class="player"><img src="/demo/assets/forest.svg" aria-hidden="true" alt=""><div><video src="/demo/assets/portrait.webm" muted loop playsinline controls preload="auto"></video></div></div><aside><a href="/example/"><img src="/demo/assets/night.svg" alt="Profile picture"></a><p>First reel</p><button id="comment">Comment control</button></aside></div>
+    <div class="reel" id="second-reel"><div class="player"><img src="/demo/assets/coast.svg" aria-hidden="true" alt=""><div><video src="/demo/assets/aurora.webm" muted loop playsinline controls preload="auto"></video></div></div><aside><p>Second reel</p></aside></div>
+    <div class="reel" id="poster-reel"><div class="player"><img src="/demo/assets/sunset.svg" aria-hidden="true" alt=""><div><video muted playsinline controls></video></div></div><aside><p>Unloaded reel with a sibling poster</p></aside></div>
+  </main>
+</body>
+</html>

@@ -3,10 +3,10 @@
     "message": "X Ambient"
   },
   "extensionDescription": {
-    "message": "Luz ambiental para fotos y videos de X y directos de Twitch y Kick."
+    "message": "Luz ambiental para fotos y videos de X e Instagram y directos de Twitch y Kick."
   },
   "popupSubtitle": {
-    "message": "Luz ambiental para X, Twitch y Kick."
+    "message": "Luz ambiental para X, Instagram, Twitch y Kick."
   },
   "languageLabel": {
     "message": "Idioma"
@@ -51,13 +51,13 @@
     "message": "Adaptar el ancho de las fotos y los videos"
   },
   "hoverHint": {
-    "message": "Fotos y videos de X. Directos de Twitch y Kick."
+    "message": "Fotos y videos de X e Instagram. Directos de Twitch y Kick."
   },
   "statusLoading": {
     "message": "Cargando ajustes…"
   },
   "statusReady": {
-    "message": "El detalle de X se ilumina automáticamente; pasá el cursor sobre publicaciones o respuestas. Twitch y Kick siguen el video."
+    "message": "El detalle de X se ilumina automáticamente; pasá el cursor sobre publicaciones o respuestas. Instagram sigue la publicación o el reel activo. Twitch y Kick siguen el video."
   },
   "statusDisabled": {
     "message": "La luz ambiental está desactivada."

@@ -5,7 +5,7 @@ const root = path.resolve(__dirname, "..");
 const outputRoot = path.resolve(process.env.X_AMBIENT_OUTPUT_DIR || path.join(root, "output"));
 const destination = path.join(outputRoot, "x-ambient");
 const archive = path.join(outputRoot, "x-ambient.zip");
-const files = ["manifest.json", "LICENSE", "INSTALL.md", "src/settings.js", "src/i18n.js", "src/streaming.js", "src/x-posts.js", "src/ambient-core.js", "src/card-layout.js", "src/content.js", "src/popup.html", "src/popup.css", "src/popup.js", ...["en", "es", "ja"].map(locale => `_locales/${locale}/messages.json`), ...[16, 32, 48, 128].map(size => `icons/icon-${size}.png`)];
+const files = ["manifest.json", "LICENSE", "INSTALL.md", "src/settings.js", "src/i18n.js", "src/streaming.js", "src/instagram.js", "src/x-posts.js", "src/ambient-core.js", "src/card-layout.js", "src/content.js", "src/popup.html", "src/popup.css", "src/popup.js", ...["en", "es", "ja"].map(locale => `_locales/${locale}/messages.json`), ...[16, 32, 48, 128].map(size => `icons/icon-${size}.png`)];
 const entries = files.map(name => ({ name, data: fs.readFileSync(path.join(root, name)) }));
 const zip = buildZip(entries);
 fs.rmSync(destination, { recursive: true, force: true });

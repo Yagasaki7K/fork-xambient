@@ -30,13 +30,16 @@
   const Core = globalThis.XAmbientCore;
   const Settings = globalThis.XAmbientSettings;
   const Streaming = globalThis.XAmbientStreaming;
+  const Instagram = globalThis.XAmbientInstagram;
   if (!Core || !Settings) return;
   globalThis.__xAmbientDispose?.();
   const platform = Streaming?.platformForHostname(location.hostname) || "x";
-  const streaming = platform !== "x";
-  const cards = !streaming ? globalThis.XAmbientCardLayout?.create() : null;
+  const instagram = platform === "instagram";
+  const streaming = platform === "twitch" || platform === "kick";
+  const automatic = streaming || instagram;
+  const cards = platform === "x" ? globalThis.XAmbientCardLayout?.create() : null;
 
-  const IMAGE_SELECTOR = [
+  const IMAGE_SELECTOR = instagram ? "img" : [
     '[data-testid="tweetPhoto"] img',
     'img[src*="pbs.twimg.com/media/"]',
     'img[src*="pbs.twimg.com/tweet_video_thumb/"]',
@@ -158,6 +161,7 @@
     signature = "";
     bounds = null;
     projection = null;
+    host.dataset.mediaCount = "0";
     activeObserver.disconnect();
     activeResizeObserver?.disconnect();
     stopFrames();
@@ -172,11 +176,14 @@
     let rect = Core.intersectRect(fullRect, { left: 0, top: 0, right: view.width, bottom: view.height });
     for (let parent = element.parentElement; rect && parent; parent = parent.parentElement) {
       const style = getComputedStyle(parent);
-      if (style.opacity === "0") return null;
+      if (style.opacity === "0" || (instagram && (parent.hidden || parent.getAttribute("aria-hidden") === "true"))) return null;
       const clipX = ["hidden", "clip", "auto", "scroll"].includes(style.overflowX);
       const clipY = ["hidden", "clip", "auto", "scroll"].includes(style.overflowY);
-      if (clipX || clipY) rect = Core.intersectRect(rect, parent.getBoundingClientRect(), clipX, clipY);
-      if (parent === activePost) break;
+      // Root overflow clips to the viewport, already applied above, not its scrolled DOM box.
+      if ((clipX || clipY) && parent !== document.documentElement && style.display !== "contents") {
+        rect = Core.intersectRect(rect, parent.getBoundingClientRect(), clipX, clipY);
+      }
+      if (!instagram && parent === activePost) break;
     }
     return rect && rect.width >= minIntersection && rect.height >= minIntersection ? rect : null;
   }
@@ -216,6 +223,37 @@
     return entry.image.complete && entry.image.naturalWidth ? entry.image : null;
   }
 
+  function instagramPoster(video) {
+    const box = video.getBoundingClientRect();
+    for (let parent = video.parentElement; parent && !parent.matches('main, [role="main"]'); parent = parent.parentElement) {
+      if (parent.querySelectorAll("video").length > 1) break;
+      const image = [...parent.querySelectorAll("img")].find(image => image.complete && image.naturalWidth
+        && Core.overlapFraction(box, image.getBoundingClientRect()) > 0.8);
+      if (image) return image;
+      if (parent.matches("article")) break;
+    }
+    return null;
+  }
+
+  function instagramCandidate(post) {
+    const items = [];
+    let playing = false;
+    for (const element of post.matches("video") ? [post] : post.querySelectorAll("img, video")) {
+      if (element.tagName === "IMG" && !Instagram.isPostImage(element)) continue;
+      const fullRect = element.getBoundingClientRect();
+      if (fullRect.width < 160 || fullRect.height < 90) continue;
+      const rect = visibleRect(element, fullRect, 90, 24);
+      if (!rect) continue;
+      items.push({ rect, fullRect });
+      if (element.tagName === "VIDEO" && !element.paused && !element.ended) playing = true;
+    }
+    return {
+      post, playing, dialog: Boolean(post.closest('[role="dialog"]')),
+      rect: Core.unionRects(items.map(item => item.rect)),
+      fullRect: Core.unionRects(items.map(item => item.fullRect)),
+    };
+  }
+
   function findMedia(post) {
     const videos = [];
     for (const video of post.matches("video") ? [post] : post.querySelectorAll("video")) {
@@ -228,22 +266,29 @@
       }
       else {
         const poster = posterFor(video);
-        const descriptor = poster && imageDescriptor(poster, video, rect, fullRect);
+        const sibling = !poster && instagram && instagramPoster(video);
+        const descriptor = poster ? imageDescriptor(poster, video, rect, fullRect)
+          : sibling && imageDescriptor(sibling, sibling, rect, sibling.getBoundingClientRect());
         if (descriptor) videos.push(descriptor);
       }
     }
     const images = [];
     for (const image of post.querySelectorAll(IMAGE_SELECTOR)) {
       if (image.closest('[data-testid^="UserAvatar"]') || !image.complete || !image.naturalWidth) continue;
+      if (instagram && !Instagram.isPostImage(image)) continue;
       const presenter = imagePresenter(image);
       const fullRect = presenter.getBoundingClientRect();
+      if (instagram && (fullRect.width < 160 || fullRect.height < 90)) continue;
       const rect = visibleRect(presenter, fullRect);
       if (!rect || videos.some((video) => Core.overlapFraction(rect, video.rect) > 0.8)) continue;
       if (images.some((other) => Core.overlapFraction(rect, other.rect) > 0.9)) continue;
       const descriptor = imageDescriptor(image, presenter, rect, fullRect);
       if (descriptor) images.push(descriptor);
     }
-    return [...videos, ...images].slice(0, 4);
+    const found = [...videos, ...images];
+    // A carousel contributes its current slide, not hidden/preloaded neighbors.
+    if (instagram) return found.sort((a, b) => b.rect.width * b.rect.height - a.rect.width * a.rect.height).slice(0, 1);
+    return found.slice(0, 4);
   }
 
   function sourceKey(item) {
@@ -260,6 +305,8 @@
     if (scope === "page") {
       const protectedRects = [];
       for (const element of document.querySelectorAll("img, video, canvas")) {
+        // Instagram's decorative Reel backdrop must remain part of the lit background.
+        if (instagram && element.tagName === "IMG" && element.getAttribute("aria-hidden") === "true") continue;
         const presenter = element.tagName === "IMG" ? imagePresenter(element) : element;
         const box = presenter.getBoundingClientRect();
         const picture = imageDescriptor(element, presenter, box, box)?.fullRect || box;
@@ -326,7 +373,7 @@
         mosaicContext.drawImage(source, crop.sx, crop.sy, crop.sw, crop.sh, crop.dx, crop.dy, crop.dw, crop.dh);
         drawn = true;
       } catch {
-        // X may replace a video source while React reuses its element.
+        // The site may replace a video source while React reuses its element.
         scheduleReconcile();
       } finally {
         mosaicContext.restore();
@@ -406,6 +453,7 @@
     pendingPost = null;
     activeObserver.disconnect();
     activeObserver.observe(post, { childList: true, subtree: true, attributes: true, attributeFilter: ["src", "poster"] });
+    activeResizeObserver?.disconnect();
     activeResizeObserver?.observe(post);
     refreshMedia(true);
   }
@@ -419,6 +467,14 @@
     }
     if (!eligible()) {
       deactivate();
+      return;
+    }
+    if (instagram) {
+      const candidates = Instagram?.findPosts(document, pathname).map(instagramCandidate) || [];
+      const post = Instagram?.pickActive(candidates, viewport(), activePost);
+      if (!post) deactivate();
+      else if (post === activePost) refreshMedia();
+      else activate(post);
       return;
     }
     if (streaming) {
@@ -456,28 +512,30 @@
   }
 
   const activeObserver = new MutationObserver(scheduleReconcile);
-  const activeResizeObserver = streaming ? new ResizeObserver(scheduleReconcile) : null;
+  const activeResizeObserver = automatic ? new ResizeObserver(scheduleReconcile) : null;
   const pageObserver = new MutationObserver((records) => {
     if (pathname !== location.pathname) scheduleReconcile();
-    if ((!streaming && !pointer && !Posts.statusId(location.pathname)) || !eligible()) return;
-    if (!streaming && records.some(record => record.type === "attributes" && record.target.matches('a[href*="/status/"]'))) scheduleReconcile();
+    if ((!automatic && !pointer && !Posts.statusId(location.pathname)) || !eligible()) return;
+    if (!automatic && records.some(record => record.type === "attributes" && record.target.matches('a[href*="/status/"]'))) scheduleReconcile();
+    if (instagram && records.some(record => record.type === "attributes"
+      && (record.target.matches('article, img, video, [role="dialog"]') || record.target.querySelector("article, img, video")))) scheduleReconcile();
     if (streaming && records.some(record => record.type === "attributes"
       && (record.target.matches("video") || record.target.querySelector("video")))) scheduleReconcile();
     if (activePost && !activePost.isConnected) scheduleReconcile();
     else if (records.some((record) => [...record.addedNodes, ...record.removedNodes].some((node) =>
-      node.nodeType === Node.ELEMENT_NODE && (node.matches(`${POST_SELECTOR}, img, video`) || node.querySelector(`${POST_SELECTOR}, img, video`))))) scheduleReconcile();
+      node.nodeType === Node.ELEMENT_NODE && (node.matches("article, img, video") || node.querySelector("article, img, video"))))) scheduleReconcile();
   });
   pageObserver.observe(document.body, {
     childList: true, subtree: true,
     attributes: true,
-    attributeFilter: streaming ? ["style", "class", "hidden", "src", "poster"] : ["href"],
+    attributeFilter: automatic ? ["style", "class", "hidden", "aria-hidden", "src", "srcset", "poster"] : ["href"],
   });
   const themeObserver = new MutationObserver(scheduleReconcile);
   themeObserver.observe(document.body, { attributes: true, attributeFilter: ["style", "class"] });
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["style", "class"] });
 
   listen(document, "pointermove", (event) => {
-    if (streaming) return;
+    if (automatic) return;
     if (event.pointerType === "touch") return;
     pointer = { x: event.clientX, y: event.clientY };
     // Within the same post, mouse motion does not need another media repaint.
@@ -485,16 +543,22 @@
     scheduleReconcile();
   }, { passive: true });
   listen(document, "pointerout", (event) => {
-    if (streaming) return;
+    if (automatic) return;
     if (!event.relatedTarget) {
       pointer = null;
       scheduleReconcile();
     }
   }, { passive: true });
   listen(document, "scroll", scheduleReconcile, { passive: true, capture: true });
+  for (const type of ["transitionend", "transitioncancel", "animationend"]) {
+    listen(document, type, event => {
+      if (instagram && event.target instanceof Element
+        && (event.target.matches("img, video") || event.target.querySelector("img, video"))) scheduleReconcile();
+    }, true);
+  }
   listen(window, "resize", scheduleReconcile, { passive: true });
   listen(document, "xambient:layout", scheduleReconcile);
-  listen(window, "blur", () => { if (!streaming) { pointer = null; scheduleReconcile(); } });
+  listen(window, "blur", () => { if (!automatic) { pointer = null; scheduleReconcile(); } });
   listen(window, "focus", scheduleReconcile);
   listen(window, "popstate", scheduleReconcile);
   if (window.navigation) listen(window.navigation, "currententrychange", scheduleReconcile);
@@ -502,8 +566,8 @@
   listen(document, "fullscreenchange", scheduleReconcile);
   for (const event of ["load", "loadeddata", "play", "pause", "ended", "seeked", "emptied", "resize"]) {
     listen(document, event, (event) => {
-      if (event.target instanceof Element && activePost
-        && (activePost.contains(event.target) || event.type === "load")) scheduleReconcile();
+      if (event.target instanceof Element && ((automatic && event.target.matches("img, video"))
+        || (activePost && (activePost.contains(event.target) || event.type === "load")))) scheduleReconcile();
     }, true);
   }
   listen(reducedMotion, "change", scheduleReconcile);

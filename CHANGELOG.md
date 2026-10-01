@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Follow the active Instagram feed post or Reel automatically, including visible carousel slides, paused frames, and scroll selection.
+
 - Add English and Spanish localization, preserve Japanese, and allow manual language selection.
 - Follow visible Twitch and Kick players automatically without changing X hover behavior.
 - Light up the opened X post automatically on detail pages, with hover selection for replies and return to the opened post when hover ends.

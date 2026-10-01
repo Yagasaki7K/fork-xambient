@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram feed fixture</title>
+  <style>
+    html { color-scheme: dark; font: 16px system-ui, sans-serif; background: #101014; color: #e8eaf2; }
+    html, body { height: 100%; }
+    html { overflow-y: scroll; }
+    body { margin: 0; }
+    nav { position: fixed; top: 0; left: 0; bottom: 0; width: 220px; padding: 24px; border-right: 1px solid #303038; }
+    main { width: min(470px, calc(100vw - 32px)); margin: 30px auto; }
+    article { padding-bottom: 24px; margin-bottom: 32px; border-bottom: 1px solid #303038; }
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    header img { width: 40px; height: 40px; border-radius: 50%; }
+    .media { width: 100%; height: 352px; overflow: hidden; border-radius: 6px; position: relative; }
+    .media img, .media video { display: block; width: 470px; max-width: calc(100vw - 32px); height: 352px; object-fit: cover; }
+    .slides { display: flex; width: 200%; transition: transform 150ms; }
+    .slides img { flex-shrink: 0; }
+    button { color: inherit; background: #34394d; border: 0; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+    aside { position: fixed; top: 60px; right: 60px; width: 180px; }
+    aside img { width: 180px; height: 180px; }
+    [role="dialog"] { position: fixed; inset: 100px 25%; background: #181820; padding: 30px; overflow: auto; z-index: 10; }
+    [hidden] { display: none !important; }
+    @media (max-width: 1000px) { nav, aside { display: none; } }
+  </style>
+</head>
+<body>
+  <nav>Navigation <button id="navigation">Test navigation</button></nav>
+  <main>
+    <article id="photo-post">
+      <header><a href="/example/"><img src="/demo/assets/night.svg" alt="Profile picture"></a><span>Photo post</span></header>
+      <div class="media"><img src="/demo/assets/sunset.svg" alt="Sunset photo"></div>
+      <p>The visible post lights up without hovering.</p>
+    </article>
+    <article id="carousel-post">
+      <header><a href="/example/"><img src="/demo/assets/night.svg" alt="Profile picture"></a><span>Carousel post</span></header>
+      <div class="media"><div class="slides"><img src="/demo/assets/forest.svg" alt="First slide"><img src="/demo/assets/coast.svg" alt="Second slide"></div></div>
+      <p>Only the current slide contributes color.</p><button id="next-slide">Next slide</button>
+    </article>
+    <article id="video-post">
+      <header><a href="/example/"><img src="/demo/assets/night.svg" alt="Profile picture"></a><span>Video post</span></header>
+      <div class="media"><video src="/demo/assets/aurora.webm" muted loop playsinline controls preload="auto"></video></div>
+      <p>Playback takes priority when most of the video is visible.</p>
+    </article>
+    <article id="lazy-post">
+      <header><span>Lazy photo post</span></header>
+      <div class="media"><img data-src="/demo/assets/coast.svg" alt="Lazy photo"></div>
+    </article>
+    <article id="avatar-only"><header><a href="/example/"><img src="/demo/assets/night.svg" alt="Profile picture"></a><span>No media</span></header></article>
+    <div style="height: 1100px"></div>
+  </main>
+  <aside><a href="/suggestion/"><img src="/demo/assets/night.svg" alt="Suggested profile"></a></aside>
+  <div role="dialog" hidden><article id="modal-post"><div class="media"><img src="/demo/assets/night.svg" alt="Opened post"></div><p>Opened post</p></article></div>
+</body>
+</html>

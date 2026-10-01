@@ -3,10 +3,10 @@
     "message": "X Ambient"
   },
   "extensionDescription": {
-    "message": "Ambient light for X photos and videos, and Twitch and Kick streams."
+    "message": "Ambient light for X and Instagram photos and videos, and Twitch and Kick streams."
   },
   "popupSubtitle": {
-    "message": "Ambient light for X, Twitch and Kick."
+    "message": "Ambient light for X, Instagram, Twitch and Kick."
   },
   "languageLabel": {
     "message": "Language"
@@ -51,13 +51,13 @@
     "message": "Adjust photo and video width to the window"
   },
   "hoverHint": {
-    "message": "X photos and videos. Twitch and Kick streams."
+    "message": "X and Instagram media. Twitch and Kick streams."
   },
   "statusLoading": {
     "message": "Loading settings…"
   },
   "statusReady": {
-    "message": "X post details light up automatically; hover over timeline posts or replies. Twitch and Kick follow the video."
+    "message": "X details light up automatically; hover over timeline posts or replies. Instagram follows the active post or reel. Twitch and Kick follow the video."
   },
   "statusDisabled": {
     "message": "Ambient light is off."
