@@ -1,6 +1,32 @@
 (() => {
   "use strict";
 
+  const POST_SELECTOR = 'article[data-testid="tweet"], article[role="article"]';
+
+  function statusId(pathname) {
+    return String(pathname).match(/^\/(?:[^/]+\/status|i\/web\/status)\/(\d+)(?:\/|$)/)?.[1] || null;
+  }
+
+  function findDetailPost(root, pathname) {
+    const id = statusId(pathname);
+    if (!id) return null;
+    // Match the post's own timestamp, rather than a quoted post or a link in its text.
+    for (const time of root.querySelectorAll("time")) {
+      const post = time.closest(POST_SELECTOR);
+      const link = time.closest("a[href]");
+      if (post && link && link.closest(POST_SELECTOR) === post
+        && !time.closest('[data-testid="quoteTweet"]') && statusId(link.pathname) === id) return post;
+    }
+    return null;
+  }
+
+  // Keep the browser entry self-contained: already loaded manifests may have an older script list.
+  const Posts = Object.freeze({ POST_SELECTOR, statusId, findDetailPost });
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = Posts;
+    return;
+  }
+
   const Core = globalThis.XAmbientCore;
   const Settings = globalThis.XAmbientSettings;
   const Streaming = globalThis.XAmbientStreaming;
@@ -10,7 +36,6 @@
   const streaming = platform !== "x";
   const cards = !streaming ? globalThis.XAmbientCardLayout?.create() : null;
 
-  const POST_SELECTOR = 'article[data-testid="tweet"], article[role="article"]';
   const IMAGE_SELECTOR = [
     '[data-testid="tweetPhoto"] img',
     'img[src*="pbs.twimg.com/media/"]',
@@ -25,6 +50,7 @@
   const removers = [];
   const posterCache = new WeakMap();
   let settings = { ...Settings.DEFAULTS };
+  let pathname = location.pathname;
   let pointer = null;
   let activePost = null;
   let pendingPost = null;
@@ -374,6 +400,8 @@
 
   function activate(post) {
     if (disposed || !eligible() || !post.isConnected) return;
+    clearTimeout(hoverTimer);
+    hoverTimer = 0;
     activePost = post;
     pendingPost = null;
     activeObserver.disconnect();
@@ -383,7 +411,13 @@
   }
 
   function reconcile() {
-    if (!eligible() || (!streaming && !pointer)) {
+    if (pathname !== location.pathname) {
+      pathname = location.pathname;
+      // Coordinates from the previous page must not select a reply on arrival.
+      pointer = null;
+      deactivate();
+    }
+    if (!eligible()) {
       deactivate();
       return;
     }
@@ -397,14 +431,19 @@
       else activate(video);
       return;
     }
-    const element = document.elementFromPoint(pointer.x, pointer.y);
-    const post = element?.closest(POST_SELECTOR) || null;
+    const detailPost = Posts.findDetailPost(document, pathname);
+    const element = pointer && document.elementFromPoint(pointer.x, pointer.y);
+    const post = element?.closest(POST_SELECTOR) || detailPost;
     if (post === activePost && post) {
       refreshMedia();
       return;
     }
     if (!post) {
       deactivate();
+      return;
+    }
+    if (post === detailPost) {
+      activate(post);
       return;
     }
     if (post === pendingPost) return;
@@ -419,7 +458,9 @@
   const activeObserver = new MutationObserver(scheduleReconcile);
   const activeResizeObserver = streaming ? new ResizeObserver(scheduleReconcile) : null;
   const pageObserver = new MutationObserver((records) => {
-    if ((!streaming && !pointer) || !eligible()) return;
+    if (pathname !== location.pathname) scheduleReconcile();
+    if ((!streaming && !pointer && !Posts.statusId(location.pathname)) || !eligible()) return;
+    if (!streaming && records.some(record => record.type === "attributes" && record.target.matches('a[href*="/status/"]'))) scheduleReconcile();
     if (streaming && records.some(record => record.type === "attributes"
       && (record.target.matches("video") || record.target.querySelector("video")))) scheduleReconcile();
     if (activePost && !activePost.isConnected) scheduleReconcile();
@@ -428,7 +469,8 @@
   });
   pageObserver.observe(document.body, {
     childList: true, subtree: true,
-    ...(streaming ? { attributes: true, attributeFilter: ["style", "class", "hidden", "src", "poster"] } : {}),
+    attributes: true,
+    attributeFilter: streaming ? ["style", "class", "hidden", "src", "poster"] : ["href"],
   });
   const themeObserver = new MutationObserver(scheduleReconcile);
   themeObserver.observe(document.body, { attributes: true, attributeFilter: ["style", "class"] });
@@ -446,14 +488,16 @@
     if (streaming) return;
     if (!event.relatedTarget) {
       pointer = null;
-      deactivate();
+      scheduleReconcile();
     }
   }, { passive: true });
   listen(document, "scroll", scheduleReconcile, { passive: true, capture: true });
   listen(window, "resize", scheduleReconcile, { passive: true });
   listen(document, "xambient:layout", scheduleReconcile);
-  listen(window, "blur", () => { if (!streaming) { pointer = null; deactivate(); } });
+  listen(window, "blur", () => { if (!streaming) { pointer = null; scheduleReconcile(); } });
   listen(window, "focus", scheduleReconcile);
+  listen(window, "popstate", scheduleReconcile);
+  if (window.navigation) listen(window.navigation, "currententrychange", scheduleReconcile);
   listen(document, "visibilitychange", scheduleReconcile);
   listen(document, "fullscreenchange", scheduleReconcile);
   for (const event of ["load", "loadeddata", "play", "pause", "ended", "seeked", "emptied", "resize"]) {

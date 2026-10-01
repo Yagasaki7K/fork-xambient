@@ -18,12 +18,13 @@ For bug reports, include your Chrome version, OS, reproduction steps, and affect
 
 | Path | Purpose |
 | --- | --- |
-| `src/content.js` | X media detection, hover handling, frame updates, and masking |
+| `src/content.js` | X detail selection, media detection, hover handling, frame updates, and masking |
 | `src/ambient-core.js` | Media geometry and edge projection |
 | `src/card-layout.js` | Optional responsive timeline width |
 | `src/i18n.js` | Bundled translation loading and language selection |
 | `_locales/` | English, Spanish, and Japanese message catalogs |
 | `src/streaming.js` | Twitch/Kick routing and visible player selection |
+| `src/x-posts.js` | Compatibility entry for earlier unpacked manifests |
 | `src/settings.js` | Defaults and stored setting normalization |
 | `src/popup.*` | Extension settings UI |
 | `demo/` | Local demo and original media assets |
@@ -50,3 +51,7 @@ The Release workflow validates the tag, reruns checks, builds `x-ambient.zip`, a
 Keep the same message keys in all three `_locales/*/messages.json` files. Translate text, tooltips, accessible labels, status messages, and newly added demo posts. Use `textContent` rather than translated HTML. Check both English and Spanish in the popup and demo, plus automatic regional locales such as `es-AR`.
 
 Open `tests/fixtures/stream.html?site=twitch` and `?site=kick` through the demo server to test automatic selection, pause/resume, player replacement, resizing, visibility, and click-through controls. These fixtures use local media and a site-routing stub. Verify the installed extension on the actual sites before claiming live-site validation. Cross-origin embedded frames are outside the current support scope.
+
+For X detail behavior, `tests/fixtures/x-detail.html` contains an ancestor, quoted status links, the opened post, image and video replies, and a text-only reply. Serve it at an X `/user/status/id` URL in a browser test to exercise the installed extension. Check automatic activation without a pointer, reply hover and return, lazy media loading, scrolling, and SPA navigation to another detail or back to `/home`.
+
+`tests/fixtures/x-layout.html` models X's navigation, primary column, inner width cap, and sidebar. Check width fitting in both timeline and detail routes, React replacing the column classes or inline styles, narrower and wider windows, and restoring the original layout when switching the setting off. The renderer must also work with the original manifest's script list, without loading `src/x-posts.js`.

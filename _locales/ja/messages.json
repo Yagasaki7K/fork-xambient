@@ -57,7 +57,7 @@
     "message": "設定を読み込み中…"
   },
   "statusReady": {
-    "message": "Xの投稿にホバーするか、Twitch・Kickの配信を再生してください。"
+    "message": "Xの詳細は自動、タイムライン・返信はホバーで点灯します。Twitch・Kickは動画に追従します。"
   },
   "statusDisabled": {
     "message": "アンビエントライトはオフです。"

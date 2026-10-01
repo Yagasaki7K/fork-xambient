@@ -1,12 +1,13 @@
 # X Ambient
 
-Luz ambiental para fotos y videos de X y directos de Twitch y Kick. En X, pasá el cursor sobre una publicación. En Twitch y Kick, la iluminación sigue automáticamente el video visible más grande.
+Luz ambiental para fotos y videos de X y directos de Twitch y Kick. En X, el detalle de una publicación se ilumina automáticamente; en la cronología y las respuestas, pasá el cursor sobre una publicación. En Twitch y Kick, la iluminación sigue automáticamente el video visible más grande.
 
 [English](README.md) · Español · [日本語](README.ja.md)
 
 ## Funciones
 
 - Iluminación en el fondo de toda la página o alrededor de la publicación o el reproductor.
+- Iluminación automática de la publicación abierta en su detalle. Las respuestas cambian la luz al pasar el cursor; al salir de una respuesta, vuelve a la publicación abierta. Se excluye el contenido fuera de la ventana.
 - Colores que se proyectan desde los bordes del contenido, sin desenfocar las fotos ni los videos originales.
 - Actualización de los colores del video hasta 12 veces por segundo, con soporte para pausas y desplazamientos.
 - Compatibilidad con temas claros y oscuros y con la preferencia de movimiento reducido.
@@ -19,7 +20,7 @@ Luz ambiental para fotos y videos de X y directos de Twitch y Kick. En X, pasá 
 1. Extraé el ZIP de esta versión, o descargá y extraé el código de este repositorio.
 2. Abrí `chrome://extensions` y activá **Modo desarrollador**.
 3. Elegí **Cargar descomprimida** y seleccioná la carpeta que contiene `manifest.json`.
-4. Recargá X, Twitch o Kick. Pasá el cursor sobre una publicación de X, o abrí un video o un directo en Twitch o Kick.
+4. Recargá X, Twitch o Kick. Abrí el detalle de una publicación de X o pasá el cursor sobre publicaciones y respuestas, o abrí un video o un directo en Twitch o Kick.
 
 No necesitás Node.js ni instalar dependencias para usar la extensión. Para actualizarla, reemplazá los archivos en la misma carpeta, pulsá **Recargar** en la extensión y recargá las páginas abiertas.
 
