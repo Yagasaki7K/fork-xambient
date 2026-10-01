@@ -8,6 +8,17 @@
     { locale: "ko", label: "한국어" },
     { locale: "zh_CN", label: "简体中文" },
     { locale: "zh_TW", label: "繁體中文" },
+    { locale: "th", label: "ไทย" },
+    { locale: "vi", label: "Tiếng Việt" },
+    { locale: "id", label: "Bahasa Indonesia" },
+    { locale: "fr", label: "Français" },
+    { locale: "de", label: "Deutsch" },
+    { locale: "pt_BR", label: "Português (Brasil)" },
+    { locale: "pt_PT", label: "Português (Portugal)" },
+    { locale: "it", label: "Italiano" },
+    { locale: "ru", label: "Русский" },
+    { locale: "ar", label: "العربية", direction: "rtl" },
+    { locale: "hi", label: "हिन्दी" },
   ].map(Object.freeze));
   const LANGUAGES = Object.freeze(LANGUAGE_OPTIONS.map(option => option.locale));
   const LANGUAGE_STORAGE_KEY = "xAmbientLanguage";
@@ -20,6 +31,11 @@
     const exact = LANGUAGES.find(locale => locale.toLowerCase().replaceAll("_", "-") === parts.join("-"));
     if (exact) return exact;
     const base = parts[0];
+    if (base === "pt") {
+      const region = parts.slice(1).find(part => /^[a-z]{2}$|^\d{3}$/.test(part));
+      const locale = region && region !== "br" ? "pt_PT" : "pt_BR";
+      return LANGUAGES.includes(locale) ? locale : null;
+    }
     if (base === "zh") {
       const traditional = parts.includes("hant") || (!parts.includes("hans") && parts.some(part => ["tw", "hk", "mo"].includes(part)));
       const locale = traditional ? "zh_TW" : "zh_CN";
@@ -44,6 +60,7 @@
       const option = select.ownerDocument.createElement("option");
       option.value = locale;
       option.lang = locale.replaceAll("_", "-");
+      option.dir = "auto";
       option.textContent = label;
       select.append(option);
     }
@@ -51,6 +68,7 @@
   }
 
   function createTranslator(locale, messages, fallback = {}, nativeGetMessage) {
+    const direction = LANGUAGE_OPTIONS.find(option => option.locale === locale)?.direction || "ltr";
     function getMessage(key) {
       return messages[key]?.message || nativeGetMessage?.(key) || fallback[key]?.message || "";
     }
@@ -71,7 +89,10 @@
           }
         }
       }
-      if (root.documentElement) root.documentElement.lang = locale.replaceAll("_", "-");
+      if (root.documentElement) {
+        root.documentElement.lang = locale.replaceAll("_", "-");
+        root.documentElement.dir = direction;
+      }
     }
 
     return Object.freeze({ locale, getMessage, apply });

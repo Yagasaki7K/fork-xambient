@@ -6,14 +6,31 @@ const I18n = require("../src/i18n.js");
 const root = path.resolve(__dirname, "..");
 const catalogs = Object.fromEntries(I18n.LANGUAGES.map(locale => [locale, JSON.parse(fs.readFileSync(path.join(root, "_locales", locale, "messages.json"), "utf8"))]));
 
-test("automatic language supports Spanish and English regional browser locales", () => {
+test("automatic language supports regional browser locales and manual overrides", () => {
   for (const locale of ["es-AR", "es-419", "es_ES"]) assert.equal(I18n.resolveLocale("auto", locale), "es");
-  assert.equal(I18n.resolveLocale("auto", "en-GB"), "en");
-  assert.equal(I18n.resolveLocale("auto", "ja-JP"), "ja");
-  assert.equal(I18n.resolveLocale("auto", "ko-KR"), "ko");
-  assert.equal(I18n.resolveLocale("auto", "de-DE"), "en");
+  for (const [tag, locale] of [
+    ["en-GB", "en"], ["ja-JP", "ja"], ["ko-KR", "ko"], ["th-TH", "th"],
+    ["vi-VN", "vi"], ["id-ID", "id"], ["fr-CA", "fr"], ["de-AT", "de"],
+    ["it-CH", "it"], ["ru-RU", "ru"], ["ar-EG", "ar"], ["hi-IN", "hi"],
+  ]) {
+    assert.equal(I18n.resolveLocale("auto", tag), locale, tag);
+    assert.equal(I18n.normalizeLanguage(tag), locale, tag);
+  }
+  assert.equal(I18n.resolveLocale("auto", "nl-NL"), "en");
   assert.equal(I18n.resolveLocale("en", "es-AR"), "en");
   assert.equal(I18n.normalizeLanguage("../../other"), "auto");
+});
+
+test("Portuguese browser regions choose the Brazilian or European catalog", () => {
+  for (const tag of ["pt", "pt-BR", "pt_BR", "pt-Latn-BR"]) {
+    assert.equal(I18n.resolveLocale("auto", tag), "pt_BR", tag);
+  }
+  for (const tag of ["pt-PT", "pt_PT", "pt-AO", "pt-MZ", "pt-Latn-PT"]) {
+    assert.equal(I18n.resolveLocale("auto", tag), "pt_PT", tag);
+  }
+  assert.equal(I18n.resolveLocale("pt_BR", "pt-PT"), "pt_BR");
+  assert.equal(I18n.resolveLocale("pt_PT", "pt-BR"), "pt_PT");
+  assert.notEqual(catalogs.pt_BR.statusSaveError.message, catalogs.pt_PT.statusSaveError.message);
 });
 
 test("Chinese scripts and regions resolve to the matching bundled catalog", () => {
@@ -40,6 +57,7 @@ test("every locale covers all UI and manifest messages without empty translation
       assert.ok(value.message.trim(), `${locale}:${key}`);
       assert.doesNotMatch(value.message, /\u2014|<script|__MSG_/);
     }
+    assert.ok(catalog.extensionDescription.message.length <= 132, `${locale}: manifest description`);
   }
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
   assert.equal(manifest.default_locale, "en");
@@ -71,7 +89,25 @@ test("HTML language tags use BCP 47 while catalog paths use Chrome locale codes"
   const document = { querySelectorAll: () => [], documentElement: {} };
   translator.apply(document);
   assert.equal(document.documentElement.lang, "zh-TW");
+  assert.equal(document.documentElement.dir, "ltr");
   assert.equal(translator.getMessage("languageLabel"), "語言");
+});
+
+test("Arabic selection sets RTL and switching languages restores LTR", async () => {
+  const document = { querySelectorAll: () => [], documentElement: {} };
+  const arabic = await I18n.load("ar", {
+    uiLanguage: "en-US", readCatalog: async locale => catalogs[locale],
+  });
+  arabic.apply(document);
+  assert.equal(document.documentElement.lang, "ar");
+  assert.equal(document.documentElement.dir, "rtl");
+  assert.equal(arabic.getMessage("languageLabel"), "اللغة");
+  const french = await I18n.load("fr", {
+    uiLanguage: "ar-SA", readCatalog: async locale => catalogs[locale],
+  });
+  french.apply(document);
+  assert.equal(document.documentElement.lang, "fr");
+  assert.equal(document.documentElement.dir, "ltr");
 });
 
 test("language override loads only bundled supported catalogs", async () => {

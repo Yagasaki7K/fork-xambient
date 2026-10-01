@@ -14,7 +14,7 @@ Luz ambiental para fotos y videos de X e Instagram y directos de Twitch y Kick. 
 - Compatibilidad con temas claros y oscuros y con la preferencia de movimiento reducido.
 - Intensidad, desenfoque y extensión ajustables.
 - Ajuste opcional del ancho de las tarjetas de X, desactivado de forma predeterminada.
-- Español, inglés, japonés, coreano y chino simplificado y tradicional. El idioma se detecta automáticamente según Chrome y también se puede elegir desde la extensión.
+- Español, inglés, japonés, coreano, chino simplificado y tradicional, tailandés, vietnamita, indonesio, francés, alemán, portugués de Brasil y Portugal, italiano, ruso, árabe e hindi. El idioma se detecta automáticamente según Chrome y también se puede elegir desde la extensión.
 
 ## Instalar en Chrome
 
@@ -40,7 +40,7 @@ Abrí el icono de la extensión en la barra de herramientas. Los cambios se guar
 | Ajustar las tarjetas de X a la ventana | Desactivado |
 | Idioma | Automático, según Chrome |
 
-En **Idioma**, podés elegir English, Español, 日本語, 한국어, 简体中文 o 繁體中文. El chino se detecta según la escritura y la región del navegador; la selección manual tiene prioridad. Los idiomas del navegador que no estén disponibles usan el inglés. **Restablecer ajustes** restaura la iluminación y conserva tu elección de idioma.
+En **Idioma**, podés elegir cualquier idioma compatible por su nombre nativo. El chino se detecta según la escritura y la región del navegador; la selección manual tiene prioridad. El portugués distingue Brasil y Portugal; si no se indica una región, usa la traducción de Brasil. El árabe se muestra de derecha a izquierda. Los idiomas del navegador que no estén disponibles usan el inglés. **Restablecer ajustes** restaura la iluminación y conserva tu elección de idioma.
 
 ![Interfaz en español e inglés](docs/images/localized-popup.jpg)
 

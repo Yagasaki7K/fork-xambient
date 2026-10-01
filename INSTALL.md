@@ -9,7 +9,7 @@ On X detail pages, the opened post lights up automatically. Hover over a reply t
 
 On Instagram, the centered feed post or Reel lights up automatically. Mostly visible playing videos take priority, and carousels follow the current slide.
 
-Use the extension's toolbar icon to adjust the lighting and language. **Language** follows Chrome automatically, or can be set to English, Español, 日本語, 한국어, 简体中文, or 繁體中文. **Fit X cards to window width** is off by default. Resetting lighting settings preserves the language choice.
+Use the extension's toolbar icon to adjust the lighting and language. **Language** follows Chrome automatically, or you can choose any supported language by its native name. Portuguese offers Brazil and Portugal; Arabic uses a right-to-left layout. **Fit X cards to window width** is off by default. Resetting lighting settings preserves the language choice.
 
 To update an existing installation, replace the files in the same folder, click the extension's **Reload** button (↻), and reload the supported pages.
 
@@ -24,7 +24,7 @@ En el detalle de X, la publicación abierta se ilumina automáticamente. Pasá e
 
 Instagram sigue automáticamente la publicación centrada o el Reel activo, con prioridad para los videos mayormente visibles en reproducción y la imagen actual de los carruseles.
 
-Abrí el icono de la extensión para ajustar la iluminación. En **Idioma**, elegí English, Español, 日本語, 한국어, 简体中文 o 繁體中文, o dejá la detección automática. El ajuste del ancho de las tarjetas de X está desactivado inicialmente. Para actualizar, reemplazá los archivos en la misma carpeta, pulsá **Recargar** y recargá las páginas.
+Abrí el icono de la extensión para ajustar la iluminación. En **Idioma**, elegí cualquier idioma compatible por su nombre nativo o dejá la detección automática. El portugués ofrece Brasil y Portugal; el árabe se muestra de derecha a izquierda. El ajuste del ancho de las tarjetas de X está desactivado inicialmente. Para actualizar, reemplazá los archivos en la misma carpeta, pulsá **Recargar** y recargá las páginas.
 
 ## 日本語
 
@@ -37,7 +37,7 @@ Xの詳細では、開いたポストが自動で点灯します。返信への�
 
 Instagramでは、ホバーなしで画面中央の投稿・リールに追従します。十分に見えている再生中の動画を優先し、カルーセルは表示中の画像だけを使います。
 
-ツールバーの拡張アイコンから設定と言語を変更できます。ブラウザの言語を自動で使用するか、English、Español、日本語、한국어、简体中文、繁體中文を選択できます。「Xのカードを画面幅に合わせる」は標準でOFFです。
+ツールバーの拡張アイコンから設定と言語を変更できます。ブラウザの言語を自動で使用するか、各言語の現地名から手動で選択できます。ポルトガル語はブラジル版とポルトガル版を選択でき、アラビア語は右から左へ表示します。「Xのカードを画面幅に合わせる」は標準でOFFです。
 
 更新時は同じフォルダに新しいファイルを置き、拡張管理画面の更新ボタン（↻）を押して対応サイトも再読み込みします。
 
