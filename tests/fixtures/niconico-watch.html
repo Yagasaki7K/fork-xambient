@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Niconico watch fixture</title>
+  <style>
+    html { color-scheme: light; background: #f4f4f6; color: #171923; font: 16px system-ui, sans-serif; }
+    body { margin: 32px; }
+    main { display: flex; gap: 32px; }
+    [data-styling-name="fullscreen-target"] { width: 900px; max-width: 70vw; }
+    .PlayerPresenter { position: relative; background: #000; aspect-ratio: 16 / 9; }
+    [data-name="stage"], [data-name="content"] { position: absolute; inset: 0; }
+    video[data-name="video-content"], canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    canvas { pointer-events: none; }
+    aside { width: 240px; padding: 16px; background: #fff; }
+    aside video { width: 240px; height: 180px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
+    button { padding: 8px 12px; border: 0; border-radius: 6px; background: #e0e4ef; color: inherit; cursor: pointer; }
+  </style>
+  <script src="/tests/fixtures/media-sites.js" defer></script>
+</head>
+<body data-site="niconico" data-initial-path="/watch/sm46858847">
+  <h1>Niconico watch fixture</h1>
+  <main>
+    <div data-styling-name="fullscreen-target"><div class="PlayerPresenter"><div data-name="stage"><div data-name="content"><video id="first-video" data-name="video-content" src="../../demo/assets/aurora.webm" autoplay muted loop playsinline controls></video><canvas id="comments" width="900" height="506"></canvas></div></div><div id="nv_watch_VideoAdContainer"></div></div></div>
+    <aside><h2>Recommendations</h2><p>Sidebar videos are excluded.</p><video id="preview" src="../../demo/assets/portrait.webm" autoplay muted loop></video><button id="click-test">Control clicks: 0</button></aside>
+  </main>
+  <div class="controls"><button id="pause">Pause / play</button><button id="replace">Replace video</button><button id="enabled">Disable light</button></div>
+</body>
+</html>

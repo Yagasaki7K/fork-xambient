@@ -1,6 +1,6 @@
 # X Ambient
 
-Ambient light for X and Instagram photos and videos, and Twitch and Kick streams. Open an X post's details for automatic lighting, hover over X timeline posts or replies, browse Instagram's feed or Reels, or watch a video on Twitch or Kick to illuminate the page.
+Ambient light for X, Instagram, Twitch, Kick, TikTok For You and Niconico videos. Open an X post's details for automatic lighting, hover over X timeline posts or replies, browse Instagram's feed or Reels or TikTok's For You feed, or watch a video on Twitch, Kick or Niconico to illuminate the page.
 
 English · [Español](README.es.md) · [日本語](README.ja.md) · [Install](INSTALL.md)
 
@@ -15,6 +15,8 @@ Colors radiate from the edges of the selected media, across the margins and the 
 - Whole-page lighting, including post card backgrounds, with an optional mode around the selected post or player.
 - Automatic lighting for the opened X post on its detail page. Replies switch the light on hover; leaving a reply returns to the opened post. Media outside the viewport is excluded.
 - Automatic lighting for the active Instagram feed post or Reel, without hovering. The centered post is selected, mostly visible playing videos take priority, and carousels use only their visible slide.
+- Automatic lighting for the active TikTok For You video, including canvas-based playback and scroll selection. No hover is needed.
+- Automatic lighting for the main video on Niconico watch pages, with native comments and player controls preserved.
 - Directional, blurred light from the actual media position. Portrait videos work even inside a wider player.
 - Live video colors, updated at up to 12 fps, with pause and seek support.
 - Multiple photos, new timeline posts, scrolling, and X page navigation.
@@ -30,7 +32,7 @@ Colors radiate from the edges of the selected media, across the margins and the 
 1. Extract a localized **`x-ambient.zip`** build, or download this repository as a ZIP and extract it.
 2. Open `chrome://extensions` and turn on **Developer mode**.
 3. Choose **Load unpacked** and select the extracted folder containing `manifest.json`.
-4. Reload X, Instagram, Twitch, or Kick. Open a post's details or hover over a timeline post or reply on X, browse Instagram's feed or Reels without hovering, or open a video or live stream on Twitch or Kick.
+4. Reload a supported site. Open an X post's details or hover over a timeline post or reply, browse Instagram's feed or Reels or TikTok's For You feed, or open a video on Twitch, Kick or Niconico.
 
 You can also clone or download this repository and load its root folder directly. Installation requires no Node.js, build step, or package installation. This project is distributed as an unpacked extension, rather than through the Chrome Web Store.
 
@@ -82,10 +84,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the code layout, manual checks, and r
 
 The content script draws media from the page into small canvases, then projects their edge colors outward and blurs the result. A media mask keeps the original images and videos clear. Cross-origin canvases are displayed without reading back or exporting their pixels.
 
-The extension uses `storage` for settings and runs only on X/Twitter, Instagram, Twitch, and Kick pages. Translation catalogs are bundled and loaded locally. It does not capture your screen, send data to an external service, or start a second video player. Settings are stored on your device.
+The extension uses `storage` for settings and runs only on X/Twitter, Instagram, Twitch, Kick, TikTok and Niconico pages. Translation catalogs are bundled and loaded locally. It does not capture your screen, send data to an external service, or start a second video player. Settings are stored on your device.
+
+TikTok support covers the For You feed at `/` and `/foryou`; following feeds, profiles, search, live streams and video detail routes are outside this scope. Niconico support covers `/watch/` video pages and uses the main player rather than sidebar previews or advertising players. It follows paused and completed frames too. Neither site needs pointer input.
 
 Instagram support covers feed posts and Reels; stories, inboxes, and profile grids are outside the current scope. The sites' page structure can change and require updates. Twitch and Kick use the largest visible HTML5 video; videos in cross-origin embedded frames are not supported. The effect pauses while the page is hidden or video is fullscreen. Player controls and chat remain interactive. Media that the browser does not allow to be drawn into a canvas, such as some protected video, is unsupported.
 
 ## License
 
-[MIT](LICENSE), including the original demo artwork, videos, and icons. This project is not affiliated with or endorsed by X / Twitter, Instagram, Twitch, or Kick.
+[MIT](LICENSE), including the original demo artwork, videos, and icons. This project is not affiliated with or endorsed by X / Twitter, Instagram, Twitch, Kick, TikTok or Niconico.

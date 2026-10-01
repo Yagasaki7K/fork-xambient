@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TikTok recommendations fixture</title>
+  <style>
+    html { color-scheme: dark; background: #080a0f; color: #e8eaf2; font: 16px system-ui, sans-serif; }
+    body { margin: 0; }
+    nav { position: fixed; left: 24px; top: 100px; width: 220px; }
+    nav video { width: 200px; height: 120px; }
+    main { margin-left: 260px; height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; }
+    article { min-height: 100vh; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; }
+    [data-e2e="feed-video"] { width: 360px; height: 640px; position: relative; overflow: hidden; border-radius: 16px; background: #000; }
+    .native-player { position: absolute; inset: 0; }
+    .native-player > video, .native-player > img, tt-vod-sr-wrap, tt-vod-sr-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    tt-vod-sr-wrap { display: none; pointer-events: none; }
+    .use-canvas > video { opacity: 0; }
+    .use-canvas tt-vod-sr-wrap { display: block; }
+    .poster > video { opacity: 0; }
+    .controls { position: fixed; right: 20px; top: 16px; z-index: 5; display: flex; gap: 8px; }
+    button { padding: 8px; background: #34394d; border: 0; border-radius: 6px; color: inherit; cursor: pointer; }
+  </style>
+  <script src="/tests/fixtures/media-sites.js" defer></script>
+</head>
+<body data-site="tiktok" data-initial-path="/foryou">
+  <nav><h1>Recommendations fixture</h1><p>Sidebar preview is excluded.</p><video id="preview" src="../../demo/assets/aurora.webm" autoplay muted loop></video></nav>
+  <main id="feed">
+    <article data-e2e="recommend-list-item-container" id="first-post">
+      <section data-e2e="feed-video">
+        <div class="native-player use-canvas"><video id="first-video" src="../../demo/assets/portrait.webm" autoplay muted loop playsinline></video><tt-vod-sr-wrap><canvas></canvas></tt-vod-sr-wrap></div>
+      </section>
+    </article>
+    <article data-e2e="recommend-list-item-container" id="second-post">
+      <section data-e2e="feed-video"><div class="native-player"><video id="second-video" src="../../demo/assets/aurora.webm" preload="auto" muted loop playsinline></video></div></section>
+    </article>
+    <article data-e2e="recommend-list-item-container" id="poster-post">
+      <section data-e2e="feed-video"><div class="native-player poster"><img src="../../demo/assets/sunset.svg" alt="Visible local poster"><video id="poster-video" preload="none" muted playsinline></video></div></section>
+    </article>
+  </main>
+  <div class="controls"><button id="pause">Pause / play</button><button id="replace">Replace video</button><button id="presentation">Toggle canvas</button><button id="enabled">Disable light</button><button id="click-test">Control clicks: 0</button></div>
+</body>
+</html>

@@ -36,7 +36,8 @@
   globalThis.__xAmbientDispose?.();
   const platform = Streaming?.platformForHostname(location.hostname) || "x";
   const instagram = platform === "instagram";
-  const streaming = platform === "twitch" || platform === "kick";
+  const tiktok = platform === "tiktok";
+  const streaming = ["twitch", "kick", "tiktok", "niconico"].includes(platform);
   const automatic = streaming || instagram;
   const cards = platform === "x" ? globalThis.XAmbientCardLayout?.create() : null;
 
@@ -248,7 +249,7 @@
     let rect = Core.intersectRect(fullRect, { left: 0, top: 0, right: view.width, bottom: view.height });
     for (let parent = element.parentElement; rect && parent; parent = parent.parentElement) {
       const style = getComputedStyle(parent);
-      if (style.opacity === "0" || (instagram && (parent.hidden || parent.getAttribute("aria-hidden") === "true"))) return null;
+      if (style.opacity === "0" || (automatic && (parent.hidden || parent.getAttribute("aria-hidden") === "true"))) return null;
       const clipX = ["hidden", "clip", "auto", "scroll"].includes(style.overflowX);
       const clipY = ["hidden", "clip", "auto", "scroll"].includes(style.overflowY);
       // Root overflow clips to the viewport, already applied above, not its scrolled DOM box.
@@ -262,7 +263,7 @@
 
   function imageDescriptor(source, owner, rect, fullRect) {
     const computed = getComputedStyle(owner);
-    const backgroundImage = owner !== source && owner.tagName !== "VIDEO";
+    const backgroundImage = owner !== source && !["VIDEO", "CANVAS"].includes(owner.tagName);
     const values = (backgroundImage ? computed.backgroundPosition : computed.objectPosition).split(" ");
     const position = values.map((value) => value.endsWith("%") ? Math.max(0, Math.min(1, parseFloat(value) / 100)) : 0.5);
     const fit = backgroundImage ? (computed.backgroundSize === "contain" ? "contain" : "cover") : computed.objectFit;
@@ -280,6 +281,16 @@
       && getComputedStyle(element).backgroundImage !== "none") || image;
   }
 
+  function videoPresenter(video) {
+    if (!tiktok || getComputedStyle(video).opacity !== "0") return video;
+    // TikTok's super-resolution player hides the video and displays a sibling canvas.
+    // Sample the original video while using the displayed canvas's crop and visibility.
+    const canvas = video.parentElement?.querySelector("tt-vod-sr-wrap canvas");
+    if (canvas && visibleRect(canvas, canvas.getBoundingClientRect())) return canvas;
+    const poster = siblingPoster(video);
+    return poster && visibleRect(poster, poster.getBoundingClientRect()) ? poster : video;
+  }
+
   function posterFor(video) {
     if (!video.poster) return null;
     let entry = posterCache.get(video);
@@ -295,7 +306,7 @@
     return entry.image.complete && entry.image.naturalWidth ? entry.image : null;
   }
 
-  function instagramPoster(video) {
+  function siblingPoster(video) {
     const box = video.getBoundingClientRect();
     for (let parent = video.parentElement; parent && !parent.matches('main, [role="main"]'); parent = parent.parentElement) {
       if (parent.querySelectorAll("video").length > 1) break;
@@ -329,18 +340,23 @@
   function findMedia(post) {
     const videos = [];
     for (const video of post.matches("video") ? [post] : post.querySelectorAll("video")) {
-      const fullRect = video.getBoundingClientRect();
-      const rect = visibleRect(video, fullRect);
+      const presenter = videoPresenter(video);
+      const fullRect = presenter.getBoundingClientRect();
+      const rect = visibleRect(presenter, fullRect);
       if (!rect) continue;
-      if (video.readyState >= 2 && video.videoWidth > 0) {
-        const descriptor = imageDescriptor(video, video, rect, fullRect);
+      if (presenter.tagName === "IMG") {
+        const descriptor = imageDescriptor(presenter, presenter, rect, fullRect);
+        if (descriptor) videos.push(descriptor);
+      } else if (video.readyState >= 2 && video.videoWidth > 0) {
+        const descriptor = imageDescriptor(video, presenter, rect, fullRect);
         if (descriptor) videos.push(descriptor);
       }
       else {
         const poster = posterFor(video);
-        const sibling = !poster && instagram && instagramPoster(video);
-        const descriptor = poster ? imageDescriptor(poster, video, rect, fullRect)
-          : sibling && imageDescriptor(sibling, sibling, rect, sibling.getBoundingClientRect());
+        const sibling = !poster && (instagram || tiktok) && siblingPoster(video);
+        const siblingRect = sibling && visibleRect(sibling, sibling.getBoundingClientRect());
+        const descriptor = poster ? imageDescriptor(poster, presenter, rect, fullRect)
+          : siblingRect && imageDescriptor(sibling, sibling, siblingRect, sibling.getBoundingClientRect());
         if (descriptor) videos.push(descriptor);
       }
     }
@@ -556,10 +572,12 @@
       return;
     }
     if (streaming) {
-      const candidates = [...document.querySelectorAll("video")].map(video => ({
-        video, rect: visibleRect(video, video.getBoundingClientRect(), 160, 48),
-      }));
-      const video = Streaming.pickVideo(candidates);
+      const candidates = Streaming.findVideos(document, platform, pathname).map(video => {
+        const presenter = videoPresenter(video);
+        const fullRect = presenter.getBoundingClientRect();
+        return { video, fullRect, rect: visibleRect(presenter, fullRect, 160, 48) };
+      });
+      const video = Streaming.pickVideo(candidates, { platform, viewport: viewport(), previous: activePost });
       if (!video) deactivate();
       else if (video === activePost) refreshMedia();
       else activate(video);
@@ -613,15 +631,16 @@
     if (instagram && records.some(record => record.type === "attributes"
       && (record.target.matches('article, img, video, [role="dialog"]') || record.target.querySelector("article, img, video")))) scheduleReconcile();
     if (streaming && records.some(record => record.type === "attributes"
-      && (record.target.matches("video") || record.target.querySelector("video")))) scheduleReconcile();
+      && (record.target.matches(tiktok ? "video, canvas, tt-vod-sr-wrap" : "video") || record.target.querySelector("video")))) scheduleReconcile();
     if (activePost && !activePost.isConnected) scheduleReconcile();
     else if (records.some((record) => [...record.addedNodes, ...record.removedNodes].some((node) =>
-      node.nodeType === Node.ELEMENT_NODE && (node.matches("article, img, video") || node.querySelector("article, img, video"))))) scheduleReconcile();
+      node.nodeType === Node.ELEMENT_NODE && (node.matches(tiktok ? "article, img, video, canvas, tt-vod-sr-wrap" : "article, img, video")
+        || node.querySelector(tiktok ? "article, img, video, tt-vod-sr-wrap canvas" : "article, img, video"))))) scheduleReconcile();
   });
   pageObserver.observe(document.body, {
     childList: true, subtree: true,
     attributes: true,
-    attributeFilter: automatic ? ["style", "class", "hidden", "aria-hidden", "src", "srcset", "poster"] : ["href"],
+    attributeFilter: automatic ? ["style", "class", "hidden", "aria-hidden", "src", "srcset", "poster", "data-e2e", "data-name", "data-styling-name"] : ["href"],
   });
   const themeObserver = new MutationObserver(scheduleReconcile);
   themeObserver.observe(document.body, { attributes: true, attributeFilter: ["style", "class"] });
@@ -645,7 +664,7 @@
   listen(document, "scroll", scheduleReconcile, { passive: true, capture: true });
   for (const type of ["transitionend", "transitioncancel", "animationend"]) {
     listen(document, type, event => {
-      if (instagram && event.target instanceof Element
+      if ((instagram || tiktok) && event.target instanceof Element
         && (event.target.matches("img, video") || event.target.querySelector("img, video"))) scheduleReconcile();
     }, true);
   }

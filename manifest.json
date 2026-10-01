@@ -33,7 +33,11 @@
         "https://kick.com/*",
         "https://www.kick.com/*",
         "https://instagram.com/*",
-        "https://www.instagram.com/*"
+        "https://www.instagram.com/*",
+        "https://tiktok.com/*",
+        "https://www.tiktok.com/*",
+        "https://nicovideo.jp/*",
+        "https://www.nicovideo.jp/*"
       ],
       "js": [
         "src/settings.js",

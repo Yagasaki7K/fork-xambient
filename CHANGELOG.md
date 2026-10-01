@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Follow TikTok's active For You video automatically, including its canvas presentation, paused frames, visible posters and scrolling.
+- Follow the main video on Niconico watch pages while preserving native comments and controls. Update supported-site text across all 17 languages.
+
 ## 0.3.0 - 2026-10-01
 
 - Render original X media edge colors behind page content. Intensity blends from the native theme to blurred media colors, including post card backgrounds. Keep the selected demo post active while adjusting its controls.
