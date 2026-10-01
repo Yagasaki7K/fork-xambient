@@ -66,6 +66,7 @@
   let bounds = null;
   let projection = null;
   let protectionKey = "";
+  let themeKey = "";
   let front = 0;
   let disposed = false;
 
@@ -97,6 +98,30 @@
   }
   light.append(field);
   shadow.append(style, light);
+  const colorFunctions = [];
+  if (platform === "x") {
+    const namespace = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(namespace, "svg");
+    svg.setAttribute("width", "0");
+    svg.setAttribute("height", "0");
+    svg.style.position = "absolute";
+    const filter = document.createElementNS(namespace, "filter");
+    filter.id = "xa-theme-colors";
+    filter.setAttribute("color-interpolation-filters", "sRGB");
+    const transfer = document.createElementNS(namespace, "feComponentTransfer");
+    for (const tag of ["feFuncR", "feFuncG", "feFuncB"]) {
+      const channel = document.createElementNS(namespace, tag);
+      channel.setAttribute("type", "linear");
+      channel.setAttribute("slope", "1");
+      channel.setAttribute("intercept", "0");
+      colorFunctions.push(channel);
+      transfer.append(channel);
+    }
+    filter.append(transfer);
+    svg.append(filter);
+    shadow.append(svg);
+    style.textContent += 'canvas { filter:blur(var(--xa-blur)) saturate(1.65) url("#xa-theme-colors"); }';
+  }
   document.documentElement.append(host);
   const contexts = canvases.map((canvas) => canvas.getContext("2d"));
   const mosaic = document.createElement("canvas");
@@ -129,17 +154,29 @@
   }
 
   function updateTheme() {
-    let dark = colorScheme.matches;
-    for (const element of [document.documentElement, document.body]) {
-      if (element) dark = Core.isDarkColor(getComputedStyle(element).backgroundColor, dark);
+    const backgrounds = [document.documentElement, document.body].filter(Boolean)
+      .map(element => getComputedStyle(element).backgroundColor);
+    const nextKey = `${colorScheme.matches}:${backgrounds.join(";")}`;
+    if (nextKey === themeKey) return;
+    themeKey = nextKey;
+    if (platform === "x") {
+      const profile = Core.buildThemeBlend(backgrounds, colorScheme.matches);
+      host.style.mixBlendMode = profile.mode;
+      colorFunctions.forEach((channel, index) => {
+        channel.setAttribute("slope", String(profile.transfer[index].slope));
+        channel.setAttribute("intercept", String(profile.transfer[index].intercept));
+      });
+      return;
     }
+    let dark = colorScheme.matches;
+    for (const color of backgrounds) dark = Core.isDarkColor(color, dark);
     host.style.mixBlendMode = dark ? "screen" : "multiply";
   }
 
   function applySettings(value) {
     settings = Settings.normalize(value);
     cards?.setEnabled(settings.fitCards);
-    host.style.setProperty("--xa-opacity", String(settings.intensity / 100));
+    host.style.setProperty("--xa-opacity", String(platform === "x" ? Core.ambientOpacity(settings.intensity) : settings.intensity / 100));
     host.style.setProperty("--xa-blur", `${settings.blur}px`);
     if (!eligible()) deactivate();
     else scheduleReconcile();

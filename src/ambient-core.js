@@ -114,13 +114,43 @@
     return strips;
   }
 
-  function isDarkColor(color, fallback = true) {
-    const match = color.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/);
-    if (!match || (match[4] !== undefined && Number(match[4]) < 0.1)) return fallback;
-    return 0.2126 * Number(match[1]) + 0.7152 * Number(match[2]) + 0.0722 * Number(match[3]) < 128;
+  function parseRgb(color) {
+    const match = String(color).match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/);
+    if (!match) return null;
+    const values = [Number(match[1]), Number(match[2]), Number(match[3]), match[4] === undefined ? 1 : Number(match[4])];
+    if (!values.every(Number.isFinite)) return null;
+    return { rgb: values.slice(0, 3).map(value => Math.max(0, Math.min(255, value)) / 255), alpha: Math.max(0, Math.min(1, values[3])) };
   }
 
-  const api = Object.freeze({ unionRects, isVisibleRect, overlapFraction, intersectRect, fitImage, contentRect, buildPostMask, buildMediaMask, buildRayProjection, isDarkColor });
+  function isDarkColor(color, fallback = true) {
+    const parsed = parseRgb(color);
+    if (!parsed || parsed.alpha < 0.1) return fallback;
+    return (0.2126 * parsed.rgb[0] + 0.7152 * parsed.rgb[1] + 0.0722 * parsed.rgb[2]) * 255 < 128;
+  }
+
+  function buildThemeBlend(backgrounds, fallbackDark = true) {
+    let rgb = fallbackDark ? [0, 0, 0] : [1, 1, 1];
+    for (const color of backgrounds) {
+      const parsed = parseRgb(color);
+      if (parsed) rgb = rgb.map((backdrop, index) => backdrop * (1 - parsed.alpha) + parsed.rgb[index] * parsed.alpha);
+    }
+    const dark = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) * 255 < 128;
+    // Invert the theme's contribution to screen/multiply without changing media pixels.
+    // Screen: b + s * (1 - b). Multiply: b * s. Keep white/black text protected by blending.
+    const transfer = rgb.map(channel => {
+      const slope = 1 / Math.max(1 / 255, dark ? 1 - channel : channel);
+      return { slope, intercept: dark ? -channel * slope : 0 };
+    });
+    return { mode: dark ? "screen" : "multiply", transfer };
+  }
+
+  function ambientOpacity(intensity) {
+    const level = Math.max(0, Math.min(100, intensity)) / 100;
+    // Give X colors more presence while keeping the whole intensity slider usable.
+    return 1 - Math.pow(1 - level, 1.3);
+  }
+
+  const api = Object.freeze({ unionRects, isVisibleRect, overlapFraction, intersectRect, fitImage, contentRect, buildPostMask, buildMediaMask, buildRayProjection, isDarkColor, buildThemeBlend, ambientOpacity });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else globalThis.XAmbientCore = api;
 })();

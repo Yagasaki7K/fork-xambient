@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Bring out X media colors with theme color compensation and a stronger intensity response across black, dim and light backgrounds.
+
 - Add Thai, Vietnamese, Indonesian, French, German, Brazilian and European Portuguese, Italian, Russian, Arabic and Hindi translations. Arabic layouts follow right-to-left reading order and restore left-to-right order when switching languages.
 
 - Add Korean, Simplified Chinese and Traditional Chinese translations, with script-aware Chinese detection and a shared language registry for menus and packaging.
