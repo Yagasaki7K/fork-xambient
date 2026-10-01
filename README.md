@@ -20,6 +20,7 @@ Colors radiate from the edges of the selected media, across the margins and the 
 - Multiple photos, new timeline posts, scrolling, and X page navigation.
 - Dark and light themes, plus reduced motion support.
 - Adjustable intensity, blur, and spread.
+- On X, intensity moves from the native theme at 0% to the original blurred media edge colors at 100%, without added saturation.
 - Automatic lighting for the largest visible video on Twitch and Kick, including paused frames.
 - English, Spanish, Japanese, Korean, Chinese (Simplified and Traditional), Thai, Vietnamese, Indonesian, French, German, Portuguese (Brazil and Portugal), Italian, Russian, Arabic, and Hindi, with automatic browser-language detection and a manual language selector.
 - Optional X cards that fit the available window width, preserving text size and media aspect ratio. **Off by default.**

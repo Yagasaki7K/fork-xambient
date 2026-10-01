@@ -82,7 +82,7 @@
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
   }
 
-  function buildRayProjection(source, target, frame, reach) {
+  function buildRayProjection(source, target, frame, reach, edgeStrength = 0) {
     if (source.width <= 0 || source.height <= 0 || target.width <= 0 || target.height <= 0 || reach <= 0) return [];
     const cx = target.left + target.width / 2;
     const cy = target.top + target.height / 2;
@@ -93,6 +93,7 @@
     const edgeX = Math.max(1, Math.round(source.width * .04));
     const edgeY = Math.max(1, Math.round(source.height * .04));
     const strips = [];
+    const minimumAlpha = Math.max(0, Math.min(1, edgeStrength));
     // Concentric edge strips fan out from the media's own center. drawImage works
     // with cross-origin sources without reading pixels or uploading a WebGL texture.
     for (let i = 0; i < steps; i++) {
@@ -102,8 +103,8 @@
       const top = cy - halfHeight * outer;
       const dx = halfWidth * (outer - inner) + .6;
       const dy = halfHeight * (outer - inner) + .6;
-      const alphaX = Math.exp(-halfWidth * (inner - 1) / reach);
-      const alphaY = Math.exp(-halfHeight * (inner - 1) / reach);
+      const alphaX = minimumAlpha + (1 - minimumAlpha) * Math.exp(-halfWidth * (inner - 1) / reach);
+      const alphaY = minimumAlpha + (1 - minimumAlpha) * Math.exp(-halfHeight * (inner - 1) / reach);
       strips.push(
         { sx: 0, sy: 0, sw: source.width, sh: edgeY, dx: left, dy: top, dw: target.width * outer, dh: dy, alpha: alphaY },
         { sx: 0, sy: source.height - edgeY, sw: source.width, sh: edgeY, dx: left, dy: cy + halfHeight * inner - .3, dw: target.width * outer, dh: dy, alpha: alphaY },
@@ -128,29 +129,16 @@
     return (0.2126 * parsed.rgb[0] + 0.7152 * parsed.rgb[1] + 0.0722 * parsed.rgb[2]) * 255 < 128;
   }
 
-  function buildThemeBlend(backgrounds, fallbackDark = true) {
+  function resolveBackgroundColor(backgrounds, fallbackDark = true) {
     let rgb = fallbackDark ? [0, 0, 0] : [1, 1, 1];
     for (const color of backgrounds) {
       const parsed = parseRgb(color);
       if (parsed) rgb = rgb.map((backdrop, index) => backdrop * (1 - parsed.alpha) + parsed.rgb[index] * parsed.alpha);
     }
-    const dark = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) * 255 < 128;
-    // Invert the theme's contribution to screen/multiply without changing media pixels.
-    // Screen: b + s * (1 - b). Multiply: b * s. Keep white/black text protected by blending.
-    const transfer = rgb.map(channel => {
-      const slope = 1 / Math.max(1 / 255, dark ? 1 - channel : channel);
-      return { slope, intercept: dark ? -channel * slope : 0 };
-    });
-    return { mode: dark ? "screen" : "multiply", transfer };
+    return `rgb(${rgb.map(channel => Math.round(channel * 255)).join(", ")})`;
   }
 
-  function ambientOpacity(intensity) {
-    const level = Math.max(0, Math.min(100, intensity)) / 100;
-    // Give X colors more presence while keeping the whole intensity slider usable.
-    return 1 - Math.pow(1 - level, 1.3);
-  }
-
-  const api = Object.freeze({ unionRects, isVisibleRect, overlapFraction, intersectRect, fitImage, contentRect, buildPostMask, buildMediaMask, buildRayProjection, isDarkColor, buildThemeBlend, ambientOpacity });
+  const api = Object.freeze({ unionRects, isVisibleRect, overlapFraction, intersectRect, fitImage, contentRect, buildPostMask, buildMediaMask, buildRayProjection, isDarkColor, resolveBackgroundColor });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else globalThis.XAmbientCore = api;
 })();

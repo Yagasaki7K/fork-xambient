@@ -13,6 +13,7 @@ Luz ambiental para fotos y videos de X e Instagram y directos de Twitch y Kick. 
 - Actualización de los colores del video hasta 12 veces por segundo, con soporte para pausas y desplazamientos.
 - Compatibilidad con temas claros y oscuros y con la preferencia de movimiento reducido.
 - Intensidad, desenfoque y extensión ajustables.
+- En X, la intensidad va del tema original al 0 % a los colores originales y desenfocados de los bordes al 100 %, sin aumentar la saturación.
 - Ajuste opcional del ancho de las tarjetas de X, desactivado de forma predeterminada.
 - Español, inglés, japonés, coreano, chino simplificado y tradicional, tailandés, vietnamita, indonesio, francés, alemán, portugués de Brasil y Portugal, italiano, ruso, árabe e hindi. El idioma se detecta automáticamente según Chrome y también se puede elegir desde la extensión.
 
