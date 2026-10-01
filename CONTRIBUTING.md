@@ -18,12 +18,13 @@ For bug reports, include your Chrome version, OS, reproduction steps, and affect
 
 | Path | Purpose |
 | --- | --- |
-| `src/content.js` | X detail selection, media detection, hover handling, frame updates, and masking |
+| `src/content.js` | Platform selection, media detection, X hover handling, frame updates, and masking |
 | `src/ambient-core.js` | Media geometry and edge projection |
 | `src/card-layout.js` | Optional responsive timeline width |
 | `src/i18n.js` | Bundled translation loading and language selection |
 | `_locales/` | English, Spanish, and Japanese message catalogs |
-| `src/streaming.js` | Twitch/Kick routing and visible player selection |
+| `src/streaming.js` | Site routing and Twitch/Kick visible player selection |
+| `src/instagram.js` | Instagram feed/Reels discovery and active post selection |
 | `src/x-posts.js` | Compatibility entry for earlier unpacked manifests |
 | `src/settings.js` | Defaults and stored setting normalization |
 | `src/popup.*` | Extension settings UI |
@@ -44,7 +45,7 @@ For bug reports, include your Chrome version, OS, reproduction steps, and affect
    git push origin v0.2.2
    ```
 
-The Release workflow validates the tag, reruns checks, builds `x-ambient.zip`, and publishes it with installation instructions and generated release notes. The archive uses an explicit file list and is rebuilt from scratch. `output/`, browser recordings, local profiles, and saved X pages are excluded from Git.
+The Release workflow validates the tag, reruns checks, builds `x-ambient.zip`, and publishes it with installation instructions and generated release notes. The archive uses an explicit file list and is rebuilt from scratch. `output/`, browser recordings, local profiles, and saved authenticated pages are excluded from Git.
 
 ## Localization and streaming checks
 
@@ -55,3 +56,5 @@ Open `tests/fixtures/stream.html?site=twitch` and `?site=kick` through the demo 
 For X detail behavior, `tests/fixtures/x-detail.html` contains an ancestor, quoted status links, the opened post, image and video replies, and a text-only reply. Serve it at an X `/user/status/id` URL in a browser test to exercise the installed extension. Check automatic activation without a pointer, reply hover and return, lazy media loading, scrolling, and SPA navigation to another detail or back to `/home`.
 
 `tests/fixtures/x-layout.html` models X's navigation, primary column, inner width cap, and sidebar. Check width fitting in both timeline and detail routes, React replacing the column classes or inline styles, narrower and wider windows, and restoring the original layout when switching the setting off. The renderer must also work with the original manifest's script list, without loading `src/x-posts.js`.
+
+For Instagram, serve `tests/fixtures/instagram-feed.html` at `https://www.instagram.com/` and `tests/fixtures/instagram-reels.html` at `/reels/` in an isolated browser with the installed extension. These fixtures use original local media and have no Instagram scripts. Check automatic activation without a pointer, scroll selection, carousel clipping, late media loads, playback priority, paused frames, inner-scroll Reels, sibling posters, DOM replacement, hidden panels, dialogs, both scopes, and click-through controls. Keep authenticated saved pages in ignored local output and distinguish fixture/saved-page validation from live-site validation.

@@ -31,13 +31,16 @@
         "https://www.twitch.tv/*",
         "https://twitch.tv/*",
         "https://kick.com/*",
-        "https://www.kick.com/*"
+        "https://www.kick.com/*",
+        "https://instagram.com/*",
+        "https://www.instagram.com/*"
       ],
       "js": [
         "src/settings.js",
         "src/ambient-core.js",
         "src/card-layout.js",
         "src/streaming.js",
+        "src/instagram.js",
         "src/x-posts.js",
         "src/content.js"
       ],
