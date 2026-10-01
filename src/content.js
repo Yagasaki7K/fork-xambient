@@ -3,9 +3,12 @@
 
   const Core = globalThis.XAmbientCore;
   const Settings = globalThis.XAmbientSettings;
+  const Streaming = globalThis.XAmbientStreaming;
   if (!Core || !Settings) return;
   globalThis.__xAmbientDispose?.();
-  const cards = globalThis.XAmbientCardLayout?.create();
+  const platform = Streaming?.platformForHostname(location.hostname) || "x";
+  const streaming = platform !== "x";
+  const cards = !streaming ? globalThis.XAmbientCardLayout?.create() : null;
 
   const POST_SELECTOR = 'article[data-testid="tweet"], article[role="article"]';
   const IMAGE_SELECTOR = [
@@ -39,6 +42,7 @@
 
   const host = document.createElement("div");
   host.id = "x-ambient-light";
+  host.dataset.platform = platform;
   host.setAttribute("aria-hidden", "true");
   host.style.cssText = "all:initial;position:fixed;inset:0;z-index:2147483600;pointer-events:none;display:block;overflow:hidden;contain:strict;";
   const shadow = host.attachShadow({ mode: "open" });
@@ -129,6 +133,7 @@
     bounds = null;
     projection = null;
     activeObserver.disconnect();
+    activeResizeObserver?.disconnect();
     stopFrames();
     light.classList.remove("visible");
   }
@@ -187,7 +192,7 @@
 
   function findMedia(post) {
     const videos = [];
-    for (const video of post.querySelectorAll("video")) {
+    for (const video of post.matches("video") ? [post] : post.querySelectorAll("video")) {
       const fullRect = video.getBoundingClientRect();
       const rect = visibleRect(video, fullRect);
       if (!rect) continue;
@@ -373,12 +378,23 @@
     pendingPost = null;
     activeObserver.disconnect();
     activeObserver.observe(post, { childList: true, subtree: true, attributes: true, attributeFilter: ["src", "poster"] });
+    activeResizeObserver?.observe(post);
     refreshMedia(true);
   }
 
   function reconcile() {
-    if (!eligible() || !pointer) {
+    if (!eligible() || (!streaming && !pointer)) {
       deactivate();
+      return;
+    }
+    if (streaming) {
+      const candidates = [...document.querySelectorAll("video")].map(video => ({
+        video, rect: visibleRect(video, video.getBoundingClientRect(), 160, 48),
+      }));
+      const video = Streaming.pickVideo(candidates);
+      if (!video) deactivate();
+      else if (video === activePost) refreshMedia();
+      else activate(video);
       return;
     }
     const element = document.elementFromPoint(pointer.x, pointer.y);
@@ -401,17 +417,25 @@
   }
 
   const activeObserver = new MutationObserver(scheduleReconcile);
+  const activeResizeObserver = streaming ? new ResizeObserver(scheduleReconcile) : null;
   const pageObserver = new MutationObserver((records) => {
-    if (!pointer || !eligible()) return;
+    if ((!streaming && !pointer) || !eligible()) return;
+    if (streaming && records.some(record => record.type === "attributes"
+      && (record.target.matches("video") || record.target.querySelector("video")))) scheduleReconcile();
     if (activePost && !activePost.isConnected) scheduleReconcile();
     else if (records.some((record) => [...record.addedNodes, ...record.removedNodes].some((node) =>
       node.nodeType === Node.ELEMENT_NODE && (node.matches(`${POST_SELECTOR}, img, video`) || node.querySelector(`${POST_SELECTOR}, img, video`))))) scheduleReconcile();
   });
-  pageObserver.observe(document.body, { childList: true, subtree: true });
+  pageObserver.observe(document.body, {
+    childList: true, subtree: true,
+    ...(streaming ? { attributes: true, attributeFilter: ["style", "class", "hidden", "src", "poster"] } : {}),
+  });
   const themeObserver = new MutationObserver(scheduleReconcile);
   themeObserver.observe(document.body, { attributes: true, attributeFilter: ["style", "class"] });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["style", "class"] });
 
   listen(document, "pointermove", (event) => {
+    if (streaming) return;
     if (event.pointerType === "touch") return;
     pointer = { x: event.clientX, y: event.clientY };
     // Within the same post, mouse motion does not need another media repaint.
@@ -419,6 +443,7 @@
     scheduleReconcile();
   }, { passive: true });
   listen(document, "pointerout", (event) => {
+    if (streaming) return;
     if (!event.relatedTarget) {
       pointer = null;
       deactivate();
@@ -427,7 +452,8 @@
   listen(document, "scroll", scheduleReconcile, { passive: true, capture: true });
   listen(window, "resize", scheduleReconcile, { passive: true });
   listen(document, "xambient:layout", scheduleReconcile);
-  listen(window, "blur", () => { pointer = null; deactivate(); });
+  listen(window, "blur", () => { if (!streaming) { pointer = null; deactivate(); } });
+  listen(window, "focus", scheduleReconcile);
   listen(document, "visibilitychange", scheduleReconcile);
   listen(document, "fullscreenchange", scheduleReconcile);
   for (const event of ["load", "loadeddata", "play", "pause", "ended", "seeked", "emptied", "resize"]) {
