@@ -1,6 +1,6 @@
 # X Ambient
 
-[English](README.md) · 日本語 · [ダウンロード](https://github.com/mmnga/x-ambient/releases/latest)
+[English](README.md) · [Español](README.es.md) · 日本語 · [ダウンロード](https://github.com/mmnga/x-ambient/releases/latest)
 
 Xのタイムラインで、ホバーした投稿の画像・動画の色をぼかして、ページの背景全体にアンビエントライトを広げるChrome拡張です。Manifest V3、ビルド不要、依存パッケージ不要。
 
@@ -68,3 +68,7 @@ Xの非公開DOM構造が変わると、メディアを検出するセレクタ�
 ## ライセンス
 
 [MIT](LICENSE)。デモ画像・動画・アイコンも、このリポジトリ用に作成した素材です。X / Twitterとの提携や承認を示すものではありません。
+
+## 言語と配信サイトの対応
+
+英語・スペイン語・日本語に対応しています。拡張の言語設定では、ブラウザの言語を自動で使用するか、言語を手動で選択できます。TwitchとKickでは、画面内で最も大きい動画の色に自動で追従します。画面外・非表示の動画、全画面表示、クロスオリジンの埋め込み動画は対象外です。ビルドにはNode.jsの標準モジュールのみを使用し、外部のzipコマンドは不要です。

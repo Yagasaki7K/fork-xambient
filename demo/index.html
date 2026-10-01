@@ -1,97 +1,100 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>X Ambient — Playground</title>
+  <title data-i18n="demoTitle">X Ambient - Playground</title>
   <link rel="icon" href="../icons/icon-32.png">
   <link rel="stylesheet" href="demo.css">
   <script src="../src/settings.js" defer></script>
+  <script src="../src/i18n.js" defer></script>
   <script src="../src/ambient-core.js" defer></script>
   <script src="../src/card-layout.js" defer></script>
+  <script src="../src/streaming.js" defer></script>
   <script src="../src/content.js" defer></script>
   <script src="demo.js" defer></script>
 </head>
 <body>
   <div class="layout">
     <aside class="navigation">
-      <a class="brand" href="#" aria-label="X Ambient ホーム"><span class="brand-mark"></span>X Ambient</a>
-      <div class="nav-item active">⌂ <span>ホーム</span></div>
-      <div class="nav-item">⌕ <span>話題を検索</span></div>
-      <div class="nav-item">♧ <span>通知</span></div>
-      <div class="nav-item">✉ <span>メッセージ</span></div>
-      <div class="nav-item">▱ <span>ブックマーク</span></div>
-      <div class="nav-item">◯ <span>プロフィール</span></div>
-      <p class="nav-caption">AMBIENT LIGHT FOR X<br>LOCAL PLAYGROUND</p>
-      <div class="nav-profile"><span class="avatar you">y</span><div>あなた<small>@you</small></div></div>
+      <a class="brand" href="#" aria-label="X Ambient home" data-i18n-aria-label="homeLinkLabel"><span class="brand-mark"></span>X Ambient</a>
+      <div class="nav-item active">⌂ <span data-i18n="navHome">Home</span></div>
+      <div class="nav-item">⌕ <span data-i18n="navSearch">Explore</span></div>
+      <div class="nav-item">♧ <span data-i18n="navNotifications">Notifications</span></div>
+      <div class="nav-item">✉ <span data-i18n="navMessages">Messages</span></div>
+      <div class="nav-item">▱ <span data-i18n="navBookmarks">Bookmarks</span></div>
+      <div class="nav-item">◯ <span data-i18n="navProfile">Profile</span></div>
+      <p class="nav-caption"><span data-i18n="navCaption">AMBIENT LIGHT FOR X</span><br><span data-i18n="localPlayground">LOCAL PLAYGROUND</span></p>
+      <div class="nav-profile"><span class="avatar you">y</span><div><span data-i18n="youLabel">You</span><small>@you</small></div></div>
     </aside>
     <main data-testid="primaryColumn">
-      <header class="timeline-header"><div><span class="eyebrow">PLAYGROUND</span><h1>光のあるタイムライン</h1></div><span class="live"><i></i> Preview</span></header>
-      <div class="tabs"><span class="selected">おすすめ</span><span>フォロー中</span></div>
-      <div class="intro">画像・動画のある投稿にカーソルを重ねてみてください。<br><small>投稿カードの背景まで、ページ全体に色が広がります。</small></div>
-      <section id="timeline" aria-label="タイムライン">
-        <article data-testid="tweet" role="article" aria-label="夕暮れの画像投稿">
+      <header class="timeline-header"><div><span class="eyebrow" data-i18n="playgroundLabel">PLAYGROUND</span><h1 data-i18n="timelineHeading">A timeline in color</h1></div><span class="live"><i></i> <span data-i18n="previewLabel">Preview</span></span></header>
+      <div class="tabs"><span class="selected" data-i18n="forYouLabel">For you</span><span data-i18n="followingLabel">Following</span></div>
+      <div class="intro"><span data-i18n="demoIntro">Hover over a post with a photo or video.</span><br><small><span data-i18n="demoIntroDetail">Colors spread across the page and the backgrounds of other posts.</span></small></div>
+      <section id="timeline" aria-label="Timeline" data-i18n-aria-label="timelineLabel">
+        <article data-testid="tweet" role="article" aria-label="Sunset photo post" data-i18n-aria-label="postSunsetLabel">
           <div data-testid="UserAvatar-sora" class="avatar">s</div>
-          <div class="post-body"><div class="author"><b>Sora</b><span>@sora_frames · 12分</span><span class="more">···</span></div>
-            <p>空の色がゆっくり変わる、この時間が好き。</p>
-            <div data-testid="tweetPhoto" class="photo"><img src="assets/sunset.svg" alt="紫の山々とオレンジ色の夕焼け" width="640" height="400"></div>
+          <div class="post-body"><div class="author"><b>Sora</b><span>@sora_frames · 12 min</span><span class="more">···</span></div>
+            <p data-i18n="postSunsetText">I love this time of day, when the sky slowly changes color.</p>
+            <div data-testid="tweetPhoto" class="photo"><img src="assets/sunset.svg" alt="Purple mountains under an orange sunset" data-i18n-alt="sunsetImageAlt" width="640" height="400"></div>
             <div class="actions"><span>♡ 128</span><span>⇄ 24</span><span>▤ 16</span><span>↗</span></div>
           </div>
         </article>
-        <article data-testid="tweet" role="article" aria-label="木漏れ日の画像投稿">
+        <article data-testid="tweet" role="article" aria-label="Sunlit forest photo post" data-i18n-aria-label="postForestLabel">
           <div data-testid="UserAvatar-mori" class="avatar mint">m</div>
-          <div class="post-body"><div class="author"><b>Mori</b><span>@mori_light · 20分</span><span class="more">···</span></div>
-            <p>木漏れ日の色が、画像の縁から外へ伸びていく。</p>
-            <div data-testid="tweetPhoto" class="photo"><img src="assets/forest.svg" alt="緑の光が差し込む森" width="640" height="400"></div>
+          <div class="post-body"><div class="author"><b>Mori</b><span>@mori_light · 20 min</span><span class="more">···</span></div>
+            <p data-i18n="postForestText">The colors of the sunlit forest spread beyond the edges of the photo.</p>
+            <div data-testid="tweetPhoto" class="photo"><img src="assets/forest.svg" alt="A forest filled with green light" data-i18n-alt="forestImageAlt" width="640" height="400"></div>
             <div class="actions"><span>♡ 94</span><span>⇄ 15</span><span>▤ 8</span><span>↗</span></div>
           </div>
         </article>
-        <article data-testid="tweet" role="article" aria-label="色が動く動画投稿">
+        <article data-testid="tweet" role="article" aria-label="Moving colors video post" data-i18n-aria-label="postVideoLabel">
           <div data-testid="UserAvatar-hikari" class="avatar blue">h</div>
-          <div class="post-body"><div class="author"><b>Hikari</b><span>@hikari_motion · 28分</span><span class="more">···</span></div>
-            <p>色も、光も、動き続ける。<span class="tag">#colorstudy</span></p>
-            <div data-testid="videoPlayer" class="photo"><video src="assets/aurora.webm" poster="assets/night.svg" autoplay muted loop playsinline controls aria-label="アンビエントカラーの動画"></video></div>
+          <div class="post-body"><div class="author"><b>Hikari</b><span>@hikari_motion · 28 min</span><span class="more">···</span></div>
+            <p><span data-i18n="postVideoText">The colors and light keep moving.</span><span class="tag">#colorstudy</span></p>
+            <div data-testid="videoPlayer" class="photo"><video src="assets/aurora.webm" poster="assets/night.svg" autoplay muted loop playsinline controls aria-label="Ambient color video" data-i18n-aria-label="videoLabel"></video></div>
             <div class="actions"><span>♡ 86</span><span>⇄ 12</span><span>▤ 9</span><span>↗</span></div>
           </div>
         </article>
-        <article data-testid="tweet" role="article" aria-label="縦長の動画投稿">
+        <article data-testid="tweet" role="article" aria-label="Portrait video post" data-i18n-aria-label="postPortraitLabel">
           <div data-testid="UserAvatar-vertical" class="avatar blue">v</div>
-          <div class="post-body"><div class="author"><b>Vertical</b><span>@vertical_color · 35分</span><span class="more">···</span></div>
-            <p>縦長の動画の色も、左右へ広がる。</p>
-            <div data-testid="videoPlayer" class="photo portrait"><video src="assets/portrait.webm" autoplay muted loop playsinline controls aria-label="縦長の動画"></video></div>
+          <div class="post-body"><div class="author"><b>Vertical</b><span>@vertical_color · 35 min</span><span class="more">···</span></div>
+            <p data-i18n="postPortraitText">Colors from portrait videos spread to both sides, too.</p>
+            <div data-testid="videoPlayer" class="photo portrait"><video src="assets/portrait.webm" autoplay muted loop playsinline controls aria-label="Portrait video" data-i18n-aria-label="portraitVideoLabel"></video></div>
             <div class="actions"><span>♡ 102</span><span>⇄ 16</span><span>▤ 12</span><span>↗</span></div>
           </div>
         </article>
-        <article data-testid="tweet" role="article" aria-label="複数画像の投稿">
+        <article data-testid="tweet" role="article" aria-label="Multiple photos post" data-i18n-aria-label="postMultipleLabel">
           <div data-testid="UserAvatar-nagi" class="avatar mint">n</div>
-          <div class="post-body"><div class="author"><b>Nagi</b><span>@nagi_places · 43分</span><span class="more">···</span></div>
-            <p>青の記録。2枚の色が、そのまま周囲に広がる。</p>
-            <div class="photo-grid"><div data-testid="tweetPhoto" class="photo"><img src="assets/coast.svg" alt="ターコイズ色の海岸" width="640" height="400"></div><div data-testid="tweetPhoto" class="photo"><img src="assets/night.svg" alt="青と紫の夜空" width="640" height="400"></div></div>
+          <div class="post-body"><div class="author"><b>Nagi</b><span>@nagi_places · 43 min</span><span class="more">···</span></div>
+            <p data-i18n="postMultipleText">A study in blue. The colors of both photos flow into their surroundings.</p>
+            <div class="photo-grid"><div data-testid="tweetPhoto" class="photo"><img src="assets/coast.svg" alt="A turquoise coastline" data-i18n-alt="coastImageAlt" width="640" height="400"></div><div data-testid="tweetPhoto" class="photo"><img src="assets/night.svg" alt="A blue and purple night sky" data-i18n-alt="nightImageAlt" width="640" height="400"></div></div>
             <div class="actions"><span>♡ 213</span><span>⇄ 41</span><span>▤ 27</span><span>↗</span></div>
           </div>
         </article>
-        <article data-testid="tweet" role="article" aria-label="テキストだけの投稿">
+        <article data-testid="tweet" role="article" aria-label="Text-only post" data-i18n-aria-label="postTextLabel">
           <div data-testid="UserAvatar-ao" class="avatar pink">a</div>
-          <div class="post-body"><div class="author"><b>Ao</b><span>@ao_notes · 1時間</span><span class="more">···</span></div><p>文字だけの投稿ではライトはお休み。<br>次の写真を待つ、静かな余白。</p><div class="actions"><span>♡ 32</span><span>⇄ 4</span><span>▤ 3</span><span>↗</span></div></div>
+          <div class="post-body"><div class="author"><b>Ao</b><span>@ao_notes · 1 h</span><span class="more">···</span></div><p><span data-i18n="postTextFirst">Text-only posts give the light a rest.</span><br><span data-i18n="postTextSecond">A quiet pause until the next photo.</span></p><div class="actions"><span>♡ 32</span><span>⇄ 4</span><span>▤ 3</span><span>↗</span></div></div>
         </article>
       </section>
-      <div class="timeline-end">You're all caught up.<br><span>光は、ホバーした投稿だけに追従します。</span></div>
+      <div class="timeline-end"><span data-i18n="caughtUpLabel">You're all caught up.</span><br><span><span data-i18n="caughtUpDetail">The light follows only the post you hover over.</span></span></div>
     </main>
     <aside class="sidebar">
       <section class="panel">
-        <div class="panel-title"><span class="eyebrow">YOUR ATMOSPHERE</span><label class="toggle"><input id="enabled" type="checkbox" checked aria-label="ライトを有効にする"><span></span></label></div>
-        <h2>光を、ととのえる。</h2><p class="panel-description">投稿の色が、ページの空気になる。</p>
-        <label class="control" for="scope"><span>光を広げる場所</span><select id="scope"><option value="page">ページの背景全体</option><option value="post">投稿の周囲</option></select></label>
-        <label class="control" for="intensity"><span>強さ<output id="intensity-value">65%</output></span><input id="intensity" type="range" min="0" max="100" value="65"></label>
-        <label class="control" for="blur"><span>ぼかし<output id="blur-value">56px</output></span><input id="blur" type="range" min="24" max="160" value="56"></label>
-        <label class="control" for="spread"><span>広がり<output id="spread-value">75%</output></span><input id="spread" type="range" min="20" max="100" value="75"></label>
-        <label class="checkbox-control"><span>動画の色に追従</span><input id="animateVideo" type="checkbox" checked></label>
-        <label class="checkbox-control"><span>カードを画面幅に合わせる</span><input id="fitCards" type="checkbox"></label>
-        <div class="theme-control"><span>表示モード</span><button id="theme" type="button">ライトに切替</button></div>
+        <div class="panel-title"><span class="eyebrow" data-i18n="atmosphereLabel">YOUR ATMOSPHERE</span><label class="toggle"><input id="enabled" type="checkbox" checked aria-label="Enable ambient light" data-i18n-aria-label="enabledLabel"><span></span></label></div>
+        <label class="control" for="language"><span data-i18n="languageLabel">Language</span><select id="language" disabled><option value="auto" data-i18n="languageAutomatic">Automatic (browser language)</option><option value="es" lang="es">Español</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option></select></label>
+        <h2 data-i18n="demoControlsHeading">Set the mood.</h2><p class="panel-description" data-i18n="demoControlsDescription">Let each post color the page.</p>
+        <label class="control" for="scope"><span data-i18n="scopeLabel">Lighting area</span><select id="scope"><option value="page" data-i18n="scopePage">Whole page background</option><option value="post" data-i18n="scopePost">Around the post or player</option></select></label>
+        <label class="control" for="intensity"><span><span data-i18n="intensityLabel">Intensity</span><output id="intensity-value">65%</output></span><input id="intensity" type="range" min="0" max="100" value="65"></label>
+        <label class="control" for="blur"><span><span data-i18n="blurLabel">Blur</span><output id="blur-value">56 px</output></span><input id="blur" type="range" min="24" max="160" value="56"></label>
+        <label class="control" for="spread"><span><span data-i18n="spreadLabel">Spread</span><output id="spread-value">75%</output></span><input id="spread" type="range" min="20" max="100" value="75"></label>
+        <label class="checkbox-control"><span data-i18n="videoTrackingLabel">Follow video colors</span><input id="animateVideo" type="checkbox" checked></label>
+        <label class="checkbox-control"><span data-i18n="fitCardsLabel">Fit X cards to window width</span><input id="fitCards" type="checkbox"></label>
+        <div class="theme-control"><span data-i18n="themeLabel">Theme</span><button id="theme" type="button" data-i18n="themeSwitchLight">Switch to light</button></div>
       </section>
-      <section class="note"><span class="note-mark">✦</span><p>Hover. Feel the color.<small>画像をぼかした色の広がりを、<br>ページの背景全体へ。</small></p></section>
-      <button id="add-post" type="button" class="add-post">＋ 投稿を追加して試す</button>
-      <p class="footer-note">X Ambient / 0.2.2<br>このページはローカルの動作デモです。</p>
+      <section class="note"><span class="note-mark">✦</span><p><span data-i18n="demoNote">Hover. Feel the color.</span><small data-i18n="demoNoteDetail">Soft colors from the photo fill the page background.</small></p></section>
+      <button id="add-post" type="button" class="add-post" data-i18n="addPostLabel">＋ Add a post</button>
+      <p class="footer-note">X Ambient / 0.2.2<br><span data-i18n="demoFooter">This is a local demo.</span></p>
     </aside>
   </div>
 </body>

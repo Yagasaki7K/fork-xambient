@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.2.2 — 2026-09-30
+## Unreleased
+
+- Add English and Spanish localization, preserve Japanese, and allow manual language selection.
+- Follow visible Twitch and Kick players automatically without changing X hover behavior.
+- Package bundled translations using a dependency-free, cross-platform ZIP writer.
+
+## 0.2.2 - 2026-09-30
 
 Initial release.
 

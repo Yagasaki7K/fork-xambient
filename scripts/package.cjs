@@ -1,22 +1,19 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { spawnSync } = require("node:child_process");
+const { buildZip } = require("./zip.cjs");
 const root = path.resolve(__dirname, "..");
-const destination = path.join(root, "output", "x-ambient");
-const archive = path.join(root, "output", "x-ambient.zip");
-const files = ["manifest.json", "LICENSE", "INSTALL.md", "src/settings.js", "src/ambient-core.js", "src/card-layout.js", "src/content.js", "src/popup.html", "src/popup.css", "src/popup.js", ...[16, 32, 48, 128].map((size) => `icons/icon-${size}.png`)];
+const outputRoot = path.resolve(process.env.X_AMBIENT_OUTPUT_DIR || path.join(root, "output"));
+const destination = path.join(outputRoot, "x-ambient");
+const archive = path.join(outputRoot, "x-ambient.zip");
+const files = ["manifest.json", "LICENSE", "INSTALL.md", "src/settings.js", "src/i18n.js", "src/streaming.js", "src/ambient-core.js", "src/card-layout.js", "src/content.js", "src/popup.html", "src/popup.css", "src/popup.js", ...["en", "es", "ja"].map(locale => `_locales/${locale}/messages.json`), ...[16, 32, 48, 128].map(size => `icons/icon-${size}.png`)];
+const entries = files.map(name => ({ name, data: fs.readFileSync(path.join(root, name)) }));
+const zip = buildZip(entries);
 fs.rmSync(destination, { recursive: true, force: true });
 fs.mkdirSync(destination, { recursive: true });
-for (const file of files) {
-  const target = path.join(destination, file);
+for (const entry of entries) {
+  const target = path.join(destination, entry.name);
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.copyFileSync(path.join(root, file), target);
+  fs.writeFileSync(target, entry.data);
 }
-fs.rmSync(archive, { force: true });
-const result = spawnSync("zip", ["-q", archive, ...files], { cwd: destination, stdio: "inherit" });
-if (result.status !== 0) {
-  console.error(`ZIPを作成できませんでした。zipコマンドを確認してください。\n読み込み用フォルダ: ${destination}`);
-  process.exitCode = 1;
-} else {
-  console.log(`読み込み用フォルダ: ${destination}\nZIP: ${archive}`);
-}
+fs.writeFileSync(archive, zip);
+console.log(`Extension folder: ${destination}\nZIP: ${archive}`);
