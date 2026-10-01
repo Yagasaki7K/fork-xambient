@@ -3,10 +3,10 @@
     "message": "X Ambient"
   },
   "extensionDescription": {
-    "message": "إضاءة محيطية لصور وفيديوهات \u2066X\u2069 و\u2066Instagram\u2069، وبثوث \u2066Twitch\u2069 و\u2066Kick\u2069."
+    "message": "إضاءة محيطية لـ \u2066X\u2069 و\u2066Instagram\u2069 و\u2066Twitch\u2069 و\u2066Kick\u2069 وخلاصة «لك» في \u2066TikTok\u2069 وفيديوهات \u2066Niconico\u2069."
   },
   "popupSubtitle": {
-    "message": "إضاءة محيطية لـ \u2066X\u2069 و\u2066Instagram\u2069 و\u2066Twitch\u2069 و\u2066Kick\u2069."
+    "message": "إضاءة محيطية لـ \u2066X\u2069 و\u2066Instagram\u2069 و\u2066Twitch\u2069 و\u2066Kick\u2069 و\u2066TikTok\u2069 و\u2066Niconico\u2069."
   },
   "languageLabel": {
     "message": "اللغة"
@@ -51,13 +51,13 @@
     "message": "ضبط عرض الصور والفيديوهات حسب النافذة"
   },
   "hoverHint": {
-    "message": "صور وفيديوهات \u2066X\u2069 و\u2066Instagram\u2069. بثوث \u2066Twitch\u2069 و\u2066Kick\u2069."
+    "message": "\u2066X\u2069 و\u2066Instagram\u2069 و\u2066Twitch\u2069 و\u2066Kick\u2069 وخلاصة «لك» في \u2066TikTok\u2069 وفيديوهات \u2066Niconico\u2069."
   },
   "statusLoading": {
     "message": "جارٍ تحميل الإعدادات…"
   },
   "statusReady": {
-    "message": "تضيء صفحة تفاصيل منشور \u2066X\u2069 تلقائيًا؛ مرّر المؤشر فوق منشورات الخط الزمني أو الردود. يتتبّع \u2066Instagram\u2069 المنشور أو مقطع \u2066Reels\u2069 النشط. يتتبّع \u2066Twitch\u2069 و\u2066Kick\u2069 الفيديو."
+    "message": "تضيء تفاصيل \u2066X\u2069 تلقائيًا؛ مرّر المؤشر فوق المنشورات أو الردود. يتتبّع \u2066Instagram\u2069 المحتوى النشط، و\u2066Twitch\u2069/\u2066Kick\u2069 الفيديو، و\u2066TikTok\u2069 خلاصة «لك»، و\u2066Niconico\u2069 صفحات الفيديو."
   },
   "statusDisabled": {
     "message": "الإضاءة المحيطية متوقفة."

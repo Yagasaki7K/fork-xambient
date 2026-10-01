@@ -3,10 +3,10 @@
     "message": "X Ambient"
   },
   "extensionDescription": {
-    "message": "Iluminação ambiente para fotos e vídeos do X e Instagram e transmissões do Twitch e Kick."
+    "message": "Iluminação ambiente para X, Instagram, Twitch, Kick, o feed Para você do TikTok e vídeos do Niconico."
   },
   "popupSubtitle": {
-    "message": "Iluminação ambiente para X, Instagram, Twitch e Kick."
+    "message": "Iluminação ambiente para X, Instagram, Twitch, Kick, TikTok e Niconico."
   },
   "languageLabel": {
     "message": "Idioma"
@@ -51,13 +51,13 @@
     "message": "Ajustar a largura das fotos e vídeos à janela"
   },
   "hoverHint": {
-    "message": "Fotos e vídeos do X e Instagram. Transmissões do Twitch e Kick."
+    "message": "X, Instagram, Twitch, Kick, Para você do TikTok e vídeos do Niconico."
   },
   "statusLoading": {
     "message": "Carregando configurações…"
   },
   "statusReady": {
-    "message": "Os detalhes de uma publicação do X se iluminam automaticamente; passe o cursor sobre publicações da linha do tempo ou respostas. O Instagram segue a publicação ou o Reel ativo. Twitch e Kick seguem o vídeo."
+    "message": "Detalhes do X se iluminam automaticamente; passe o cursor sobre publicações ou respostas. O Instagram segue a mídia ativa; Twitch/Kick os vídeos, TikTok o feed Para você e Niconico as páginas de vídeo."
   },
   "statusDisabled": {
     "message": "A iluminação ambiente está desativada."

@@ -2,7 +2,7 @@
 
 [English](README.md) · [Español](README.es.md) · 日本語 · [ダウンロード](https://github.com/mmnga/x-ambient/releases/latest)
 
-XとInstagramの画像・動画、TwitchとKickの配信の色をぼかして、ページの背景全体にアンビエントライトを広げるChrome拡張です。投稿の詳細では開いたポストが自動で点灯し、Xのタイムライン・返信はホバーで切り替わります。Instagramはアクティブな投稿・リールへ自動で追従します。Manifest V3、ビルド不要、依存パッケージ不要。
+X・Instagram、Twitch・Kick、TikTokのおすすめ、ニコニコの動画の色をぼかして、ページの背景全体にアンビエントライトを広げるChrome拡張です。投稿の詳細では開いたポストが自動で点灯し、Xのタイムライン・返信はホバーで切り替わります。Instagram、TikTok、ニコニコでは表示中のメディアへ自動で追従します。Manifest V3、ビルド不要、依存パッケージ不要。
 
 ![デモ画像](docs/images/preview.png)
 
@@ -13,7 +13,7 @@ XとInstagramの画像・動画、TwitchとKickの配信の色をぼかして、
 1. [Releases](https://github.com/mmnga/x-ambient/releases/latest) から `x-ambient.zip` をダウンロードし、解凍する。
 2. Chromeで `chrome://extensions` を開き、右上の「デベロッパーモード」を有効にする。
 3. 「パッケージ化されていない拡張機能を読み込む」で、`manifest.json` があるフォルダを選ぶ。
-4. 対応サイトを再読み込みする。Xでは投稿詳細を開くか、タイムライン・返信にホバーする。Instagramでは通常のフィード・リールを表示する。Twitch・Kickでは動画や配信を再生する。
+4. 対応サイトを再読み込みする。Xでは投稿詳細を開くか、タイムライン・返信にホバーする。Instagramでは通常のフィード・リール、TikTokではおすすめを表示する。Twitch・Kickでは動画や配信を再生し、ニコニコでは動画詳細を開く。
 
 このリポジトリをダウンロードして、そのフォルダをChromeへ読み込むこともできます。インストールにNode.jsは不要です。
 
@@ -65,13 +65,17 @@ npm test
 
 外部メディアを描いたCanvasは読み出しが制限されるため、ピクセルの読み出し・書き出しを使わず、Canvas自体を表示します。[MDN: drawImage](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage)、[MDN: 外部画像とCanvas](https://developer.mozilla.org/en-US/docs/Web/HTML/How_to/CORS_enabled_image)。
 
-権限は設定保存の `storage` と、コンテンツスクリプトを動かすX/Twitter、Instagram、Twitch、Kickのページアクセスのみ。画面キャプチャ・全サイトへのアクセス・外部サーバーへの送信はありません。
+権限は設定保存の `storage` と、コンテンツスクリプトを動かすX/Twitter、Instagram、Twitch、Kick、TikTok、ニコニコのページアクセスのみ。画面キャプチャ・全サイトへのアクセス・外部サーバーへの送信はありません。
+
+TikTokでは、おすすめ（`/`・`/foryou`）にホバーなしで追従します。スクロールで選択を切り替え、Canvasで表示される動画にも対応します。フォロー中・プロフィール・検索・LIVE・動画詳細は対象外です。
+
+ニコニコでは、動画詳細（`/watch/`）のメインプレーヤーに自動で追従します。コメント描画と操作UIはそのまま残し、一時停止・再生終了後のフレームにも対応します。おすすめ欄のプレビューや広告プレーヤーは選択しません。
 
 Instagramの対応範囲は通常のフィードとリールです。ストーリーズ・DM・プロフィールの一覧は対象外です。サイトのDOM構造が変わると、メディアを検出するセレクターの更新が必要になることがあります。暗号化されている動画など、ブラウザがCanvasへの描画を許可しないメディアには対応しません。
 
 ## ライセンス
 
-[MIT](LICENSE)。デモ画像・動画・アイコンも、このリポジトリ用に作成した素材です。X / Twitter、Instagram、Twitch、Kickとの提携や承認を示すものではありません。
+[MIT](LICENSE)。デモ画像・動画・アイコンも、このリポジトリ用に作成した素材です。X / Twitter、Instagram、Twitch、Kick、TikTok、ニコニコとの提携や承認を示すものではありません。
 
 ## 言語と配信サイトの対応
 

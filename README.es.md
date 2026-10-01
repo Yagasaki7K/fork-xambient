@@ -1,6 +1,6 @@
 # X Ambient
 
-Luz ambiental para fotos y videos de X e Instagram y directos de Twitch y Kick. En X, el detalle de una publicación se ilumina automáticamente; en la cronología y las respuestas, pasá el cursor sobre una publicación. En Instagram, la iluminación sigue la publicación o el Reel activo sin pasar el cursor. En Twitch y Kick, la iluminación sigue automáticamente el video visible más grande.
+Luz ambiental para X, Instagram, Twitch, Kick, el feed Para ti de TikTok y videos de Niconico. En X, el detalle de una publicación se ilumina automáticamente; en la cronología y las respuestas, pasá el cursor sobre una publicación. Instagram y TikTok siguen el contenido activo sin pasar el cursor. Twitch y Kick siguen el video visible más grande, y Niconico el reproductor principal.
 
 [English](README.md) · Español · [日本語](README.ja.md)
 
@@ -9,6 +9,8 @@ Luz ambiental para fotos y videos de X e Instagram y directos de Twitch y Kick. 
 - Iluminación en el fondo de toda la página o alrededor de la publicación o el reproductor.
 - Iluminación automática de la publicación abierta en su detalle. Las respuestas cambian la luz al pasar el cursor; al salir de una respuesta, vuelve a la publicación abierta. Se excluye el contenido fuera de la ventana.
 - En el feed y Reels de Instagram, se selecciona la publicación centrada; los videos en reproducción tienen prioridad cuando están mayormente visibles. Los carruseles usan solo la imagen visible.
+- TikTok sigue automáticamente el video activo de Para ti, incluso si se muestra mediante un lienzo, y cambia al desplazarse.
+- Niconico sigue el video principal en su página de reproducción y conserva los comentarios y controles originales.
 - Colores que se proyectan desde los bordes del contenido, sin desenfocar las fotos ni los videos originales.
 - Actualización de los colores del video hasta 12 veces por segundo, con soporte para pausas y desplazamientos.
 - Compatibilidad con temas claros y oscuros y con la preferencia de movimiento reducido.
@@ -22,7 +24,7 @@ Luz ambiental para fotos y videos de X e Instagram y directos de Twitch y Kick. 
 1. Extraé el ZIP de esta versión, o descargá y extraé el código de este repositorio.
 2. Abrí `chrome://extensions` y activá **Modo desarrollador**.
 3. Elegí **Cargar descomprimida** y seleccioná la carpeta que contiene `manifest.json`.
-4. Recargá X, Instagram, Twitch o Kick. Abrí el detalle de una publicación de X o pasá el cursor sobre publicaciones y respuestas, navegá por el feed o Reels de Instagram sin pasar el cursor, o abrí un video o un directo en Twitch o Kick.
+4. Recargá el sitio compatible. Abrí el detalle de una publicación de X o pasá el cursor sobre publicaciones y respuestas, navegá por el feed o Reels de Instagram o Para ti de TikTok, o abrí un video en Twitch, Kick o Niconico.
 
 No necesitás Node.js ni instalar dependencias para usar la extensión. Para actualizarla, reemplazá los archivos en la misma carpeta, pulsá **Recargar** en la extensión y recargá las páginas abiertas.
 
@@ -67,10 +69,12 @@ Se generan `output/x-ambient/` y `output/x-ambient.zip`. El empaquetado funciona
 
 ## Privacidad y límites
 
-La extensión solicita únicamente `storage` y se ejecuta en X/Twitter, Instagram, Twitch y Kick. Los ajustes y las traducciones se guardan y cargan localmente. No captura la pantalla, no envía datos a servicios externos y no abre un segundo reproductor.
+La extensión solicita únicamente `storage` y se ejecuta en X/Twitter, Instagram, Twitch, Kick, TikTok y Niconico. Los ajustes y las traducciones se guardan y cargan localmente. No captura la pantalla, no envía datos a servicios externos y no abre un segundo reproductor.
+
+TikTok admite Para ti en `/` y `/foryou`; los perfiles, búsquedas, directos, el feed Siguiendo y las páginas individuales de video quedan fuera del alcance. Niconico admite el reproductor principal de las páginas `/watch/`, incluyendo fotogramas pausados o finales, sin seleccionar vistas previas ni reproductores publicitarios.
 
 El motor dibuja el contenido en lienzos pequeños sin leer ni exportar sus píxeles. El efecto se pausa cuando la página está oculta o el video está en pantalla completa. Los controles del reproductor y el chat siguen siendo interactivos. Los videos protegidos que no permiten dibujarse en un lienzo y los reproductores dentro de marcos de otro origen quedan fuera del alcance actual. Instagram admite publicaciones del feed y Reels; las historias, los mensajes y las cuadrículas de perfiles quedan fuera del alcance actual. Los cambios de estructura de los sitios pueden requerir actualizaciones.
 
 ## Licencia
 
-[MIT](LICENSE). El proyecto original, sus imágenes, videos e iconos son de mmnga. Este proyecto no está afiliado a X/Twitter, Instagram, Twitch ni Kick.
+[MIT](LICENSE). El proyecto original, sus imágenes, videos e iconos son de mmnga. Este proyecto no está afiliado a X/Twitter, Instagram, Twitch, Kick, TikTok ni Niconico.
